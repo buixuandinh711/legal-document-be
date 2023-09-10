@@ -1,35 +1,31 @@
+mod app_config;
+mod models;
 mod routes;
 
-use actix_identity::{Identity, IdentityMiddleware};
+use crate::routes::{auth::auth_routes, home::home_routes};
+use actix_identity::IdentityMiddleware;
 use actix_session::{config::PersistentSession, storage::CookieSessionStore, SessionMiddleware};
 use actix_web::{
     cookie::{time::Duration, Key},
-    error, get, middleware, App, HttpServer, Responder,
+    middleware, web, App, HttpServer,
 };
-
-use crate::routes::auth::auth_routes;
-
+use dotenv::dotenv;
+use tokio_postgres::NoTls;
 const ONE_MINUTE: Duration = Duration::minutes(1);
-
-#[get("/")]
-async fn index(identity: Option<Identity>) -> actix_web::Result<impl Responder> {
-    let id = match identity.map(|id| id.id()) {
-        None => "anonymous".to_owned(),
-        Some(Ok(id)) => id,
-        Some(Err(err)) => return Err(error::ErrorInternalServerError(err)),
-    };
-
-    Ok(format!("Hello {id}"))
-}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    dotenv().ok();
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     let secret_key = Key::generate();
+    let app_config = app_config::AppConfig::from_env().unwrap();
 
-    log::info!("starting HTTP server at http://localhost:8080");
+    let db_pool = app_config.pg.create_pool(None, NoTls).unwrap();
+    let _ = db_pool.get().await.unwrap(); // panic if unable to connect
+    log::info!("Database connected!");
 
+    log::info!("Server started at: {}", &app_config.server_addr);
     HttpServer::new(move || {
         App::new()
             .wrap(IdentityMiddleware::default())
@@ -42,10 +38,11 @@ async fn main() -> std::io::Result<()> {
             )
             .wrap(middleware::NormalizePath::trim())
             .wrap(middleware::Logger::default())
+            .app_data(web::Data::new(db_pool.clone()))
             .configure(auth_routes)
-            .service(index)
+            .configure(home_routes)
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(&app_config.server_addr)?
     .run()
     .await
 }

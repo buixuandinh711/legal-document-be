@@ -2,8 +2,9 @@
 name = "legal-document-be"
 version = "0.1.0"
 edition = "2021"
+default-run = "legal-document-be"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+# See more keys and their definitions at 
 
 [dependencies]
 actix-web = { version = "4", features = [
