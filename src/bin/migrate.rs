@@ -10,7 +10,7 @@ struct PGConfig {
 async fn create_tables(client: &Client) -> Result<(), PoolError> {
     let statement = include_str!("../sql/create-table.sql");
     client.batch_execute(statement).await?;
-    log::info!("Table created");
+    println!("Table created");
     Ok(())
 }
 
@@ -27,7 +27,7 @@ async fn main() {
 
     let pool = config.pg.create_pool(None, NoTls).unwrap();
     let client = pool.get().await.unwrap();
-    log::info!("Connect successfully");
+    println!("Connect successfully");
 
     create_tables(&client).await.unwrap();
 }

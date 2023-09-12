@@ -12,8 +12,19 @@ pub struct ReqRegisterBody {
     pub password: String,
 }
 
-mod routes {
+impl error::ResponseError for UserModelError {
+    fn error_response(&self) -> HttpResponse {
+        HttpResponse::build(self.status_code()).body(self.to_string())
+    }
 
+    fn status_code(&self) -> StatusCode {
+        match *self {
+            _ => StatusCode::INTERNAL_SERVER_ERROR,
+        }
+    }
+}
+
+mod routes {
     use crate::{
         models::user::{create_user, CreateUserInfo},
         routes::auth::{ReqLoginBody, ReqRegisterBody},
@@ -55,8 +66,10 @@ mod routes {
     }
 }
 
-use actix_web::web;
+use actix_web::{error, http::StatusCode, web, HttpResponse};
 use routes::*;
+
+use crate::models::user::UserModelError;
 
 // this function could be located in a different module
 pub fn auth_routes(cfg: &mut web::ServiceConfig) {
