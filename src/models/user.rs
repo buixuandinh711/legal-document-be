@@ -5,8 +5,6 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use tokio_pg_mapper_derive::PostgresMapper;
 
-use crate::routes::auth::ReqRegisterBody;
-
 #[derive(Deserialize, PostgresMapper, Serialize)]
 #[pg_mapper(table = "user")]
 pub struct User {
@@ -20,22 +18,13 @@ pub struct CreateUserInfo {
     pub raw_password: String,
 }
 
-impl From<ReqRegisterBody> for CreateUserInfo {
-    fn from(value: ReqRegisterBody) -> Self {
-        CreateUserInfo {
-            username: value.username,
-            raw_password: value.password,
-        }
-    }
-}
-
 #[derive(Debug, Display, Error)]
 pub enum UserModelError {
-    #[display(fmt = "Validation error on field: {}", field)]
-    ValidationError { field: String },
+    #[display(fmt = "Validation error: {}", msg)]
+    ValidationError { msg: String },
     #[display(fmt = "Database pool error: {}", msg)]
     DBPoolError { msg: String },
-    #[display(fmt = "{}", msg)]
+    #[display(fmt = "Other error: {}", msg)]
     OtherError { msg: String },
 }
 
@@ -76,14 +65,21 @@ fn validate_user_info(user_info: &CreateUserInfo) -> Result<(), UserModelError> 
     let username_regex = Regex::new(r"^[\w]{6,20}$").unwrap();
     if !username_regex.is_match(&user_info.username) {
         return Err(UserModelError::ValidationError {
-            field: "username".to_owned(),
+            msg: "Invalid username".to_owned(),
         });
     }
 
-    let password_regex = Regex::new(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$").unwrap();
-    if !password_regex.is_match(&user_info.raw_password) {
+    let password_regex = Regex::new(r"^[A-Za-z\d#$@!%&*?]{8,30}$").unwrap();
+    if !password_regex.is_match(&user_info.raw_password)
+        || !user_info.raw_password.chars().any(|c| c.is_alphabetic())
+        || !user_info.raw_password.chars().any(|c| c.is_numeric())
+        || !user_info
+            .raw_password
+            .chars()
+            .any(|c| "#$@!%&*?".contains(c))
+    {
         return Err(UserModelError::ValidationError {
-            field: "password".to_owned(),
+            msg: "Invalid password".to_owned(),
         });
     }
 
