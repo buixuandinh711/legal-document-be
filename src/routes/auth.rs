@@ -1,5 +1,7 @@
 mod routes {
-    use crate::models::user::{create_user, CreateUserInfo, UserModelError};
+    use crate::models::user::{
+        create_user, verify_user, CreateUserInfo, LoginUserInfo, UserModelError,
+    };
     use actix_identity::Identity;
     use actix_web::{
         http::StatusCode, post, web, HttpMessage, HttpRequest, HttpResponse, Responder,
@@ -28,13 +30,43 @@ mod routes {
         }
     }
 
-    #[post("/login")]
-    async fn login(req: HttpRequest, info: web::Json<ReqLoginBody>) -> impl Responder {
-        if info.username.eq("dinhbx") && info.password.eq("dinhbx123") {
-            Identity::login(&req.extensions(), info.username.clone()).unwrap();
-            return HttpResponse::Ok().body("Login successfully");
+    impl From<ReqLoginBody> for LoginUserInfo {
+        fn from(value: ReqLoginBody) -> Self {
+            LoginUserInfo {
+                username: value.username,
+                raw_password: value.password,
+            }
         }
-        HttpResponse::Unauthorized().body("Login failed")
+    }
+
+    #[post("/login")]
+    async fn login(
+        req: HttpRequest,
+        db_pool: web::Data<Pool>,
+        req_body: web::Json<ReqLoginBody>,
+    ) -> impl Responder {
+        let client = db_pool.get().await.unwrap();
+
+        let user_info = LoginUserInfo {
+            username: req_body.username.clone(),
+            raw_password: req_body.password.clone(),
+        };
+
+        match verify_user(&client, &user_info).await {
+            Ok(is_verified) => {
+                if is_verified {
+                    Identity::login(&req.extensions(), req_body.username.clone()).unwrap();
+                    return HttpResponse::Ok().body("Login successfully");
+                } else {
+                    HttpResponse::Unauthorized().body("Invalid password")
+                }
+            }
+            Err(err) => match err {
+                UserModelError::ValidationError { msg } => HttpResponse::BadRequest().body(msg),
+                UserModelError::NotFoundError { msg } => HttpResponse::NotFound().body(msg),
+                _ => HttpResponse::InternalServerError().body("Internal server error".to_owned()),
+            },
+        }
     }
 
     #[post("/logout")]
