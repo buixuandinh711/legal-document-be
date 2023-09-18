@@ -1,4 +1,5 @@
 mod app_config;
+mod indexer;
 mod models;
 mod routes;
 
@@ -11,6 +12,7 @@ use actix_web::{
 };
 use dotenv::dotenv;
 use tokio_postgres::NoTls;
+
 const ONE_MINUTE: Duration = Duration::minutes(1);
 
 #[actix_web::main]
@@ -26,6 +28,12 @@ async fn main() -> std::io::Result<()> {
     log::info!("Database connected!");
 
     log::info!("Server started at: {}", &app_config.server_addr);
+
+    tokio::spawn(indexer::index_event(
+        app_config.chain_rpc_url.clone(),
+        app_config.legal_document_address.clone(),
+    ));
+
     HttpServer::new(move || {
         App::new()
             .wrap(IdentityMiddleware::default())
