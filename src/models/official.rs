@@ -13,6 +13,8 @@ pub enum OfficialModelError {
     FromSqlError,
     #[display(fmt = "Failed to convert to SQL type")]
     ToSqlError,
+    #[display(fmt = "Official not found")]
+    OfficialNotFound,
     #[display(fmt = "Database pool error: {}", msg)]
     DBPoolError { msg: &'static str },
     #[display(fmt = "Other error: {}", msg)]
@@ -79,6 +81,7 @@ impl ToSql for OfficialStatus {
 #[pg_mapper(table = "officials")]
 pub struct Official {
     pub id: i32,
+    pub username: String,
     pub address: String,
     pub name: String,
     pub date_of_birth: String,
@@ -88,34 +91,19 @@ pub struct Official {
     pub private_key: String,
 }
 
-pub async fn get_official(client: &Client, address: &str) -> Result<Official, OfficialModelError> {
-    let statement = "SELECT * FROM officials WHERE address = $1";
-    let statement =
-        client
-            .prepare(&statement)
-            .await
-            .map_err(|_| OfficialModelError::DBPoolError {
-                msg: "Failed to prepare statement",
-            })?;
-
-    let query = client
-        .query_one(&statement, &[&address])
-        .await
-        .map_err(|_| OfficialModelError::DBPoolError {
-            msg: "Failed to query",
-        })?;
-    let official = Official::from_row(query).unwrap();
-
-    Ok(official)
-}
-
 pub struct CreateOfficalInfo {
+    pub username: String,
     pub address: String,
     pub name: String,
     pub date_of_birth: String,
     pub sex: String,
     pub password: String,
     pub private_key: String,
+}
+
+pub struct VerifyOfficialInfo {
+    pub username: String,
+    pub password: String,
 }
 
 pub async fn create_offcial(
@@ -142,6 +130,7 @@ pub async fn create_offcial(
         .execute(
             &statement,
             &[
+                &official_info.username,
                 &official_info.address,
                 &official_info.name,
                 &official_info.date_of_birth,
@@ -157,4 +146,35 @@ pub async fn create_offcial(
         })?;
 
     Ok(())
+}
+
+pub async fn verify_official(
+    client: &Client,
+    verify_info: VerifyOfficialInfo,
+) -> Result<bool, OfficialModelError> {
+    let statement = include_str!("../sql/query_official_password.sql");
+    let statement =
+        client
+            .prepare(&statement)
+            .await
+            .map_err(|_| OfficialModelError::DBPoolError {
+                msg: "Failed to prepare statement",
+            })?;
+
+    let query_result = client
+        .query_one(&statement, &[&verify_info.username])
+        .await
+        .map_err(|err| {
+            println!("{:?}", err.code());
+            OfficialModelError::OfficialNotFound
+        })?;
+
+    let hash_password: String = query_result.get(0);
+
+    match bcrypt::verify(&verify_info.password, &hash_password) {
+        Ok(is_verified) => Ok(is_verified),
+        Err(_) => Err(OfficialModelError::OtherError {
+            msg: "Unable to verify password",
+        }),
+    }
 }

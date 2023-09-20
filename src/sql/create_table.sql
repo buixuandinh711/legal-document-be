@@ -1,5 +1,6 @@
 CREATE TABLE "officials"(
 	"id" SERIAL PRIMARY KEY,
+	"username" VARCHAR(255) NOT NULL UNIQUE,
 	"address" VARCHAR(255) NOT NULL UNIQUE,
 	"name" VARCHAR(255) NOT NULL,
 	"date_of_birth" VARCHAR(255) NOT NULL,
