@@ -1,9 +1,7 @@
 use std::error::Error;
-
 use bytes::BytesMut;
 use deadpool_postgres::Client;
 use derive_more::{Display, Error as DeriveError};
-use tokio_pg_mapper::FromTokioPostgresRow;
 use tokio_pg_mapper_derive::PostgresMapper;
 use tokio_postgres::types::{to_sql_checked, FromSql, IsNull, ToSql, Type};
 

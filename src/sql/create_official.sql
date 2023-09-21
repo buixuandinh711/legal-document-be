@@ -1,4 +1,4 @@
-INSERT INTO officials (
+INSERT INTO "officials" (
         "username",
         "address",
         "name",
