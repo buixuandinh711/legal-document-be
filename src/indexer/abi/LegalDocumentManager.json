@@ -1,0 +1,960 @@
+[
+  {
+    "inputs": [],
+    "name": "DivisionAlreadyCreated",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "DivisionNotActive",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "DivisionNotCreated",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "DivisionNotDeactivated",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidCreatedOfficialRole",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidSignature",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidUpdatedRole",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotDivisionManager",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotSystemAdminOrDivisionAdmin",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotTheSystemAdmin",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "OfficialAlreadyCreated",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "OfficialNotActive",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "OfficialNotCreated",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "OfficialNotDeactivated",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "PositionIndexOutOfRange",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "PositionNotGranted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SignersSignaturesLengthNotMatch",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "supervisoryDivId",
+        "type": "string"
+      }
+    ],
+    "name": "DivisionCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      }
+    ],
+    "name": "DivisionDeactivated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      }
+    ],
+    "name": "DivisionReactivated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newName",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newSupervisoryDivId",
+        "type": "string"
+      }
+    ],
+    "name": "DivisionUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "documentHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "positionIndex",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address[]",
+        "name": "signers",
+        "type": "address[]"
+      }
+    ],
+    "name": "DocumentSubmitted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "sex",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "dateOfBirth",
+            "type": "string"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IOfficialManager.OfficialInfo",
+        "name": "info",
+        "type": "tuple"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "creatorPositionIndex",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "positionIndex",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "enum PositionRole",
+            "name": "role",
+            "type": "uint8"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IOfficialManager.Position",
+        "name": "position",
+        "type": "tuple"
+      }
+    ],
+    "name": "OfficialCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      }
+    ],
+    "name": "OfficialDeactivated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "sex",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "dateOfBirth",
+            "type": "string"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IOfficialManager.OfficialInfo",
+        "name": "info",
+        "type": "tuple"
+      }
+    ],
+    "name": "OfficialInfoUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      }
+    ],
+    "name": "OfficialReactivated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "creatorPositionIndex",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "positionIndex",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newPositionName",
+        "type": "string"
+      }
+    ],
+    "name": "PositionNameUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "creatorPositionIndex",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "positionIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "PositionRoleRevoked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "creatorPositionIndex",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "positionIndex",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum PositionRole",
+        "name": "newPositionRole",
+        "type": "uint8"
+      }
+    ],
+    "name": "PositionRoleUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newSystemAdmin",
+        "type": "address"
+      }
+    ],
+    "name": "SystemAdminUpdated",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "supervisoryDivId",
+        "type": "string"
+      }
+    ],
+    "name": "createDivision",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "sex",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "dateOfBirth",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct IOfficialManager.OfficialInfo",
+        "name": "info",
+        "type": "tuple"
+      },
+      {
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "creatorPositionIndex",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "enum PositionRole",
+            "name": "role",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct IOfficialManager.Position",
+        "name": "position",
+        "type": "tuple"
+      }
+    ],
+    "name": "createOfficial",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      }
+    ],
+    "name": "deactivateDivision",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      }
+    ],
+    "name": "deactivateOfficial",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      }
+    ],
+    "name": "getDivision",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "enum IDivisionManager.DivisionStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "supervisoryDivId",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct IDivisionManager.Division",
+        "name": "division",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getOfficialInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "sex",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "dateOfBirth",
+                "type": "string"
+              }
+            ],
+            "internalType": "struct IOfficialManager.OfficialInfo",
+            "name": "info",
+            "type": "tuple"
+          },
+          {
+            "internalType": "enum OfficialStatus",
+            "name": "status",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct IOfficialManager.Official",
+        "name": "official",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "positionIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "getOfficialPosition",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "enum PositionRole",
+            "name": "role",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct IOfficialManager.Position",
+        "name": "position",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      }
+    ],
+    "name": "getOfficialPositions",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "enum PositionRole",
+            "name": "role",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct IOfficialManager.Position[]",
+        "name": "positions",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getSystemAdmin",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "currentSystemAdmin",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      }
+    ],
+    "name": "reactivateDivision",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      }
+    ],
+    "name": "reactivateOfficial",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "creatorPositionIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "positionIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "revokePositionRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "positionIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "documentContent",
+        "type": "bytes"
+      },
+      {
+        "internalType": "address[]",
+        "name": "signers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bytes",
+        "name": "signatures",
+        "type": "bytes"
+      }
+    ],
+    "name": "submitDocument",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "newName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "newSupervisoryDivId",
+        "type": "string"
+      }
+    ],
+    "name": "updateDivision",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "sex",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "dateOfBirth",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct IOfficialManager.OfficialInfo",
+        "name": "info",
+        "type": "tuple"
+      }
+    ],
+    "name": "updateOfficialInfo",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "creatorPositionIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "positionIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "newPositionName",
+        "type": "string"
+      }
+    ],
+    "name": "updatePositionName",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "officialAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "divisionId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "creatorPositionIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "positionIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "enum PositionRole",
+        "name": "newPositionRole",
+        "type": "uint8"
+      }
+    ],
+    "name": "updatePositionRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newSystemAdmin",
+        "type": "address"
+      }
+    ],
+    "name": "updateSystemAdmin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
