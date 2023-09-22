@@ -3,7 +3,7 @@ mod indexer;
 mod models;
 mod routes;
 
-use crate::routes::{auth::auth_routes, home::home_routes};
+use crate::routes::{auth::auth_routes, home::home_routes, division_route::division_routes};
 use actix_identity::IdentityMiddleware;
 use actix_session::{config::PersistentSession, storage::CookieSessionStore, SessionMiddleware};
 use actix_web::{
@@ -29,10 +29,10 @@ async fn main() -> std::io::Result<()> {
 
     log::info!("Server started at: {}", &app_config.server_addr);
 
-    tokio::spawn(indexer::index_event(
-        app_config.chain_rpc_url.clone(),
-        app_config.legal_document_address.clone(),
-    ));
+    // tokio::spawn(indexer::index_event(
+    //     app_config.chain_rpc_url.clone(),
+    //     app_config.legal_document_address.clone(),
+    // ));
 
     HttpServer::new(move || {
         App::new()
@@ -49,6 +49,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(db_pool.clone()))
             .configure(auth_routes)
             .configure(home_routes)
+            .configure(division_routes)
     })
     .bind(&app_config.server_addr)?
     .run()

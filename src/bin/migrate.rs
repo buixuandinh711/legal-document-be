@@ -8,7 +8,7 @@ struct PGConfig {
 }
 
 async fn create_tables(client: &Client) -> Result<(), PoolError> {
-    let statement = include_str!("../sql/create-table.sql");
+    let statement = include_str!("../sql/create_table.sql");
     client.batch_execute(statement).await?;
     println!("Table created");
     Ok(())
