@@ -55,13 +55,13 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("createOfficial"),
+                    ::std::borrow::ToOwned::to_owned("createOfficer"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Function {
-                            name: ::std::borrow::ToOwned::to_owned("createOfficial"),
+                            name: ::std::borrow::ToOwned::to_owned("createOfficer"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -78,7 +78,7 @@ pub mod legal_document_manager {
                                     ),
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned(
-                                            "struct IOfficialManager.OfficialInfo",
+                                            "struct IOfficerManager.OfficerInfo",
                                         ),
                                     ),
                                 },
@@ -110,7 +110,7 @@ pub mod legal_document_manager {
                                     ),
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned(
-                                            "struct IOfficialManager.Position",
+                                            "struct IOfficerManager.Position",
                                         ),
                                     ),
                                 },
@@ -142,13 +142,13 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("deactivateOfficial"),
+                    ::std::borrow::ToOwned::to_owned("deactivateOfficer"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Function {
-                            name: ::std::borrow::ToOwned::to_owned("deactivateOfficial"),
+                            name: ::std::borrow::ToOwned::to_owned("deactivateOfficer"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -198,13 +198,13 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("getOfficialInfo"),
+                    ::std::borrow::ToOwned::to_owned("getOfficerInfo"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Function {
-                            name: ::std::borrow::ToOwned::to_owned("getOfficialInfo"),
+                            name: ::std::borrow::ToOwned::to_owned("getOfficerInfo"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -213,7 +213,7 @@ pub mod legal_document_manager {
                             ],
                             outputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("official"),
+                                    name: ::std::borrow::ToOwned::to_owned("officer"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Tuple(
                                         ::std::vec![
                                             ::ethers::core::abi::ethabi::ParamType::Tuple(
@@ -228,7 +228,7 @@ pub mod legal_document_manager {
                                     ),
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned(
-                                            "struct IOfficialManager.Official",
+                                            "struct IOfficerManager.Officer",
                                         ),
                                     ),
                                 },
@@ -239,15 +239,13 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("getOfficialPosition"),
+                    ::std::borrow::ToOwned::to_owned("getOfficerPosition"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Function {
-                            name: ::std::borrow::ToOwned::to_owned(
-                                "getOfficialPosition",
-                            ),
+                            name: ::std::borrow::ToOwned::to_owned("getOfficerPosition"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -281,7 +279,7 @@ pub mod legal_document_manager {
                                     ),
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned(
-                                            "struct IOfficialManager.Position",
+                                            "struct IOfficerManager.Position",
                                         ),
                                     ),
                                 },
@@ -292,15 +290,15 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("getOfficialPositions"),
+                    ::std::borrow::ToOwned::to_owned("getOfficerPositions"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Function {
                             name: ::std::borrow::ToOwned::to_owned(
-                                "getOfficialPositions",
+                                "getOfficerPositions",
                             ),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -329,7 +327,7 @@ pub mod legal_document_manager {
                                     ),
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned(
-                                            "struct IOfficialManager.Position[]",
+                                            "struct IOfficerManager.Position[]",
                                         ),
                                     ),
                                 },
@@ -382,13 +380,13 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("reactivateOfficial"),
+                    ::std::borrow::ToOwned::to_owned("reactivateOfficer"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Function {
-                            name: ::std::borrow::ToOwned::to_owned("reactivateOfficial"),
+                            name: ::std::borrow::ToOwned::to_owned("reactivateOfficer"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -408,7 +406,7 @@ pub mod legal_document_manager {
                             name: ::std::borrow::ToOwned::to_owned("revokePositionRole"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -539,13 +537,13 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("updateOfficialInfo"),
+                    ::std::borrow::ToOwned::to_owned("updateOfficerInfo"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Function {
-                            name: ::std::borrow::ToOwned::to_owned("updateOfficialInfo"),
+                            name: ::std::borrow::ToOwned::to_owned("updateOfficerInfo"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -562,7 +560,7 @@ pub mod legal_document_manager {
                                     ),
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned(
-                                            "struct IOfficialManager.OfficialInfo",
+                                            "struct IOfficerManager.OfficerInfo",
                                         ),
                                     ),
                                 },
@@ -580,7 +578,7 @@ pub mod legal_document_manager {
                             name: ::std::borrow::ToOwned::to_owned("updatePositionName"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -634,7 +632,7 @@ pub mod legal_document_manager {
                             name: ::std::borrow::ToOwned::to_owned("updatePositionRole"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -833,13 +831,13 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("OfficialCreated"),
+                    ::std::borrow::ToOwned::to_owned("OfficerCreated"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Event {
-                            name: ::std::borrow::ToOwned::to_owned("OfficialCreated"),
+                            name: ::std::borrow::ToOwned::to_owned("OfficerCreated"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
@@ -891,15 +889,13 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("OfficialDeactivated"),
+                    ::std::borrow::ToOwned::to_owned("OfficerDeactivated"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Event {
-                            name: ::std::borrow::ToOwned::to_owned(
-                                "OfficialDeactivated",
-                            ),
+                            name: ::std::borrow::ToOwned::to_owned("OfficerDeactivated"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
@@ -909,15 +905,13 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("OfficialInfoUpdated"),
+                    ::std::borrow::ToOwned::to_owned("OfficerInfoUpdated"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Event {
-                            name: ::std::borrow::ToOwned::to_owned(
-                                "OfficialInfoUpdated",
-                            ),
+                            name: ::std::borrow::ToOwned::to_owned("OfficerInfoUpdated"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
@@ -938,15 +932,13 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("OfficialReactivated"),
+                    ::std::borrow::ToOwned::to_owned("OfficerReactivated"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Event {
-                            name: ::std::borrow::ToOwned::to_owned(
-                                "OfficialReactivated",
-                            ),
+                            name: ::std::borrow::ToOwned::to_owned("OfficerReactivated"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
@@ -964,7 +956,7 @@ pub mod legal_document_manager {
                             ),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
@@ -1008,7 +1000,7 @@ pub mod legal_document_manager {
                             ),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
@@ -1047,7 +1039,7 @@ pub mod legal_document_manager {
                             ),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("officialAddress"),
+                                    name: ::std::borrow::ToOwned::to_owned("officerAddress"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
@@ -1141,11 +1133,11 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("InvalidCreatedOfficialRole"),
+                    ::std::borrow::ToOwned::to_owned("InvalidCreatedOfficerRole"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::AbiError {
                             name: ::std::borrow::ToOwned::to_owned(
-                                "InvalidCreatedOfficialRole",
+                                "InvalidCreatedOfficerRole",
                             ),
                             inputs: ::std::vec![],
                         },
@@ -1208,40 +1200,40 @@ pub mod legal_document_manager {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("OfficialAlreadyCreated"),
+                    ::std::borrow::ToOwned::to_owned("OfficerAlreadyCreated"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::AbiError {
                             name: ::std::borrow::ToOwned::to_owned(
-                                "OfficialAlreadyCreated",
+                                "OfficerAlreadyCreated",
                             ),
                             inputs: ::std::vec![],
                         },
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("OfficialNotActive"),
+                    ::std::borrow::ToOwned::to_owned("OfficerNotActive"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::AbiError {
-                            name: ::std::borrow::ToOwned::to_owned("OfficialNotActive"),
+                            name: ::std::borrow::ToOwned::to_owned("OfficerNotActive"),
                             inputs: ::std::vec![],
                         },
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("OfficialNotCreated"),
+                    ::std::borrow::ToOwned::to_owned("OfficerNotCreated"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::AbiError {
-                            name: ::std::borrow::ToOwned::to_owned("OfficialNotCreated"),
+                            name: ::std::borrow::ToOwned::to_owned("OfficerNotCreated"),
                             inputs: ::std::vec![],
                         },
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("OfficialNotDeactivated"),
+                    ::std::borrow::ToOwned::to_owned("OfficerNotDeactivated"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::AbiError {
                             name: ::std::borrow::ToOwned::to_owned(
-                                "OfficialNotDeactivated",
+                                "OfficerNotDeactivated",
                             ),
                             inputs: ::std::vec![],
                         },
@@ -1337,20 +1329,20 @@ pub mod legal_document_manager {
                 .method_hash([185, 66, 143, 97], (division_id, name, supervisory_div_id))
                 .expect("method not found (this should never happen)")
         }
-        ///Calls the contract's `createOfficial` (0x42927c35) function
-        pub fn create_official(
+        ///Calls the contract's `createOfficer` (0x379f8801) function
+        pub fn create_officer(
             &self,
-            official_address: ::ethers::core::types::Address,
-            info: OfficialInfo,
+            officer_address: ::ethers::core::types::Address,
+            info: OfficerInfo,
             division_id: ::std::string::String,
             creator_position_index: ::ethers::core::types::U256,
             position: Position,
         ) -> ::ethers::contract::builders::ContractCall<M, ()> {
             self.0
                 .method_hash(
-                    [66, 146, 124, 53],
+                    [55, 159, 136, 1],
                     (
-                        official_address,
+                        officer_address,
                         info,
                         division_id,
                         creator_position_index,
@@ -1368,13 +1360,13 @@ pub mod legal_document_manager {
                 .method_hash([246, 171, 105, 209], division_id)
                 .expect("method not found (this should never happen)")
         }
-        ///Calls the contract's `deactivateOfficial` (0x2ccfa5d7) function
-        pub fn deactivate_official(
+        ///Calls the contract's `deactivateOfficer` (0x4719c01d) function
+        pub fn deactivate_officer(
             &self,
-            official_address: ::ethers::core::types::Address,
+            officer_address: ::ethers::core::types::Address,
         ) -> ::ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([44, 207, 165, 215], official_address)
+                .method_hash([71, 25, 192, 29], officer_address)
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `getDivision` (0xf1aba969) function
@@ -1386,37 +1378,37 @@ pub mod legal_document_manager {
                 .method_hash([241, 171, 169, 105], division_id)
                 .expect("method not found (this should never happen)")
         }
-        ///Calls the contract's `getOfficialInfo` (0x8fcadd06) function
-        pub fn get_official_info(
+        ///Calls the contract's `getOfficerInfo` (0xd25bd7a8) function
+        pub fn get_officer_info(
             &self,
-            official_address: ::ethers::core::types::Address,
-        ) -> ::ethers::contract::builders::ContractCall<M, Official> {
+            officer_address: ::ethers::core::types::Address,
+        ) -> ::ethers::contract::builders::ContractCall<M, Officer> {
             self.0
-                .method_hash([143, 202, 221, 6], official_address)
+                .method_hash([210, 91, 215, 168], officer_address)
                 .expect("method not found (this should never happen)")
         }
-        ///Calls the contract's `getOfficialPosition` (0x79ec5273) function
-        pub fn get_official_position(
+        ///Calls the contract's `getOfficerPosition` (0x54423f36) function
+        pub fn get_officer_position(
             &self,
-            official_address: ::ethers::core::types::Address,
+            officer_address: ::ethers::core::types::Address,
             division_id: ::std::string::String,
             position_index: ::ethers::core::types::U256,
         ) -> ::ethers::contract::builders::ContractCall<M, Position> {
             self.0
                 .method_hash(
-                    [121, 236, 82, 115],
-                    (official_address, division_id, position_index),
+                    [84, 66, 63, 54],
+                    (officer_address, division_id, position_index),
                 )
                 .expect("method not found (this should never happen)")
         }
-        ///Calls the contract's `getOfficialPositions` (0x67e605e5) function
-        pub fn get_official_positions(
+        ///Calls the contract's `getOfficerPositions` (0x562d258e) function
+        pub fn get_officer_positions(
             &self,
-            official_address: ::ethers::core::types::Address,
+            officer_address: ::ethers::core::types::Address,
             division_id: ::std::string::String,
         ) -> ::ethers::contract::builders::ContractCall<M, ::std::vec::Vec<Position>> {
             self.0
-                .method_hash([103, 230, 5, 229], (official_address, division_id))
+                .method_hash([86, 45, 37, 142], (officer_address, division_id))
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `getSystemAdmin` (0x35a13597) function
@@ -1439,19 +1431,19 @@ pub mod legal_document_manager {
                 .method_hash([111, 144, 124, 62], division_id)
                 .expect("method not found (this should never happen)")
         }
-        ///Calls the contract's `reactivateOfficial` (0x49031411) function
-        pub fn reactivate_official(
+        ///Calls the contract's `reactivateOfficer` (0x0cda2a94) function
+        pub fn reactivate_officer(
             &self,
-            official_address: ::ethers::core::types::Address,
+            officer_address: ::ethers::core::types::Address,
         ) -> ::ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([73, 3, 20, 17], official_address)
+                .method_hash([12, 218, 42, 148], officer_address)
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `revokePositionRole` (0x0c7505f2) function
         pub fn revoke_position_role(
             &self,
-            official_address: ::ethers::core::types::Address,
+            officer_address: ::ethers::core::types::Address,
             division_id: ::std::string::String,
             creator_position_index: ::ethers::core::types::U256,
             position_index: ::ethers::core::types::U256,
@@ -1460,7 +1452,7 @@ pub mod legal_document_manager {
                 .method_hash(
                     [12, 117, 5, 242],
                     (
-                        official_address,
+                        officer_address,
                         division_id,
                         creator_position_index,
                         position_index,
@@ -1498,20 +1490,20 @@ pub mod legal_document_manager {
                 )
                 .expect("method not found (this should never happen)")
         }
-        ///Calls the contract's `updateOfficialInfo` (0xe33320a1) function
-        pub fn update_official_info(
+        ///Calls the contract's `updateOfficerInfo` (0x6cc251ec) function
+        pub fn update_officer_info(
             &self,
-            official_address: ::ethers::core::types::Address,
-            info: OfficialInfo,
+            officer_address: ::ethers::core::types::Address,
+            info: OfficerInfo,
         ) -> ::ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([227, 51, 32, 161], (official_address, info))
+                .method_hash([108, 194, 81, 236], (officer_address, info))
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `updatePositionName` (0x64da9222) function
         pub fn update_position_name(
             &self,
-            official_address: ::ethers::core::types::Address,
+            officer_address: ::ethers::core::types::Address,
             division_id: ::std::string::String,
             creator_position_index: ::ethers::core::types::U256,
             position_index: ::ethers::core::types::U256,
@@ -1521,7 +1513,7 @@ pub mod legal_document_manager {
                 .method_hash(
                     [100, 218, 146, 34],
                     (
-                        official_address,
+                        officer_address,
                         division_id,
                         creator_position_index,
                         position_index,
@@ -1533,7 +1525,7 @@ pub mod legal_document_manager {
         ///Calls the contract's `updatePositionRole` (0xc8878167) function
         pub fn update_position_role(
             &self,
-            official_address: ::ethers::core::types::Address,
+            officer_address: ::ethers::core::types::Address,
             division_id: ::std::string::String,
             creator_position_index: ::ethers::core::types::U256,
             position_index: ::ethers::core::types::U256,
@@ -1543,7 +1535,7 @@ pub mod legal_document_manager {
                 .method_hash(
                     [200, 135, 129, 103],
                     (
-                        official_address,
+                        officer_address,
                         division_id,
                         creator_position_index,
                         position_index,
@@ -1611,43 +1603,43 @@ pub mod legal_document_manager {
         > {
             self.0.event()
         }
-        ///Gets the contract's `OfficialCreated` event
-        pub fn official_created_filter(
+        ///Gets the contract's `OfficerCreated` event
+        pub fn officer_created_filter(
             &self,
         ) -> ::ethers::contract::builders::Event<
             ::std::sync::Arc<M>,
             M,
-            OfficialCreatedFilter,
+            OfficerCreatedFilter,
         > {
             self.0.event()
         }
-        ///Gets the contract's `OfficialDeactivated` event
-        pub fn official_deactivated_filter(
+        ///Gets the contract's `OfficerDeactivated` event
+        pub fn officer_deactivated_filter(
             &self,
         ) -> ::ethers::contract::builders::Event<
             ::std::sync::Arc<M>,
             M,
-            OfficialDeactivatedFilter,
+            OfficerDeactivatedFilter,
         > {
             self.0.event()
         }
-        ///Gets the contract's `OfficialInfoUpdated` event
-        pub fn official_info_updated_filter(
+        ///Gets the contract's `OfficerInfoUpdated` event
+        pub fn officer_info_updated_filter(
             &self,
         ) -> ::ethers::contract::builders::Event<
             ::std::sync::Arc<M>,
             M,
-            OfficialInfoUpdatedFilter,
+            OfficerInfoUpdatedFilter,
         > {
             self.0.event()
         }
-        ///Gets the contract's `OfficialReactivated` event
-        pub fn official_reactivated_filter(
+        ///Gets the contract's `OfficerReactivated` event
+        pub fn officer_reactivated_filter(
             &self,
         ) -> ::ethers::contract::builders::Event<
             ::std::sync::Arc<M>,
             M,
-            OfficialReactivatedFilter,
+            OfficerReactivatedFilter,
         > {
             self.0.event()
         }
@@ -1760,7 +1752,7 @@ pub mod legal_document_manager {
     )]
     #[etherror(name = "DivisionNotDeactivated", abi = "DivisionNotDeactivated()")]
     pub struct DivisionNotDeactivated;
-    ///Custom Error type `InvalidCreatedOfficialRole` with signature `InvalidCreatedOfficialRole()` and selector `0x6fc743d7`
+    ///Custom Error type `InvalidCreatedOfficerRole` with signature `InvalidCreatedOfficerRole()` and selector `0x21065334`
     #[derive(
         Clone,
         ::ethers::contract::EthError,
@@ -1771,11 +1763,8 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    #[etherror(
-        name = "InvalidCreatedOfficialRole",
-        abi = "InvalidCreatedOfficialRole()"
-    )]
-    pub struct InvalidCreatedOfficialRole;
+    #[etherror(name = "InvalidCreatedOfficerRole", abi = "InvalidCreatedOfficerRole()")]
+    pub struct InvalidCreatedOfficerRole;
     ///Custom Error type `InvalidSignature` with signature `InvalidSignature()` and selector `0x8baa579f`
     #[derive(
         Clone,
@@ -1857,7 +1846,7 @@ pub mod legal_document_manager {
     )]
     #[etherror(name = "NullAddress", abi = "NullAddress()")]
     pub struct NullAddress;
-    ///Custom Error type `OfficialAlreadyCreated` with signature `OfficialAlreadyCreated()` and selector `0xb70e26a9`
+    ///Custom Error type `OfficerAlreadyCreated` with signature `OfficerAlreadyCreated()` and selector `0xde0fb66d`
     #[derive(
         Clone,
         ::ethers::contract::EthError,
@@ -1868,9 +1857,9 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    #[etherror(name = "OfficialAlreadyCreated", abi = "OfficialAlreadyCreated()")]
-    pub struct OfficialAlreadyCreated;
-    ///Custom Error type `OfficialNotActive` with signature `OfficialNotActive()` and selector `0xe46a6c51`
+    #[etherror(name = "OfficerAlreadyCreated", abi = "OfficerAlreadyCreated()")]
+    pub struct OfficerAlreadyCreated;
+    ///Custom Error type `OfficerNotActive` with signature `OfficerNotActive()` and selector `0x0bf39de4`
     #[derive(
         Clone,
         ::ethers::contract::EthError,
@@ -1881,9 +1870,9 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    #[etherror(name = "OfficialNotActive", abi = "OfficialNotActive()")]
-    pub struct OfficialNotActive;
-    ///Custom Error type `OfficialNotCreated` with signature `OfficialNotCreated()` and selector `0x931a69a3`
+    #[etherror(name = "OfficerNotActive", abi = "OfficerNotActive()")]
+    pub struct OfficerNotActive;
+    ///Custom Error type `OfficerNotCreated` with signature `OfficerNotCreated()` and selector `0x2e6b5d86`
     #[derive(
         Clone,
         ::ethers::contract::EthError,
@@ -1894,9 +1883,9 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    #[etherror(name = "OfficialNotCreated", abi = "OfficialNotCreated()")]
-    pub struct OfficialNotCreated;
-    ///Custom Error type `OfficialNotDeactivated` with signature `OfficialNotDeactivated()` and selector `0xc252cbc7`
+    #[etherror(name = "OfficerNotCreated", abi = "OfficerNotCreated()")]
+    pub struct OfficerNotCreated;
+    ///Custom Error type `OfficerNotDeactivated` with signature `OfficerNotDeactivated()` and selector `0xfb9abcdf`
     #[derive(
         Clone,
         ::ethers::contract::EthError,
@@ -1907,8 +1896,8 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    #[etherror(name = "OfficialNotDeactivated", abi = "OfficialNotDeactivated()")]
-    pub struct OfficialNotDeactivated;
+    #[etherror(name = "OfficerNotDeactivated", abi = "OfficerNotDeactivated()")]
+    pub struct OfficerNotDeactivated;
     ///Custom Error type `PositionIndexOutOfRange` with signature `PositionIndexOutOfRange()` and selector `0xf8a5fe02`
     #[derive(
         Clone,
@@ -1958,17 +1947,17 @@ pub mod legal_document_manager {
         DivisionNotActive(DivisionNotActive),
         DivisionNotCreated(DivisionNotCreated),
         DivisionNotDeactivated(DivisionNotDeactivated),
-        InvalidCreatedOfficialRole(InvalidCreatedOfficialRole),
+        InvalidCreatedOfficerRole(InvalidCreatedOfficerRole),
         InvalidSignature(InvalidSignature),
         InvalidUpdatedRole(InvalidUpdatedRole),
         NotDivisionManager(NotDivisionManager),
         NotSystemAdminOrDivisionAdmin(NotSystemAdminOrDivisionAdmin),
         NotTheSystemAdmin(NotTheSystemAdmin),
         NullAddress(NullAddress),
-        OfficialAlreadyCreated(OfficialAlreadyCreated),
-        OfficialNotActive(OfficialNotActive),
-        OfficialNotCreated(OfficialNotCreated),
-        OfficialNotDeactivated(OfficialNotDeactivated),
+        OfficerAlreadyCreated(OfficerAlreadyCreated),
+        OfficerNotActive(OfficerNotActive),
+        OfficerNotCreated(OfficerNotCreated),
+        OfficerNotDeactivated(OfficerNotDeactivated),
         PositionIndexOutOfRange(PositionIndexOutOfRange),
         PositionNotGranted(PositionNotGranted),
         SignersSignaturesLengthNotMatch(SignersSignaturesLengthNotMatch),
@@ -2006,10 +1995,10 @@ pub mod legal_document_manager {
             ) {
                 return Ok(Self::DivisionNotDeactivated(decoded));
             }
-            if let Ok(decoded) = <InvalidCreatedOfficialRole as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <InvalidCreatedOfficerRole as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::InvalidCreatedOfficialRole(decoded));
+                return Ok(Self::InvalidCreatedOfficerRole(decoded));
             }
             if let Ok(decoded) = <InvalidSignature as ::ethers::core::abi::AbiDecode>::decode(
                 data,
@@ -2041,25 +2030,25 @@ pub mod legal_document_manager {
             ) {
                 return Ok(Self::NullAddress(decoded));
             }
-            if let Ok(decoded) = <OfficialAlreadyCreated as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <OfficerAlreadyCreated as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::OfficialAlreadyCreated(decoded));
+                return Ok(Self::OfficerAlreadyCreated(decoded));
             }
-            if let Ok(decoded) = <OfficialNotActive as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <OfficerNotActive as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::OfficialNotActive(decoded));
+                return Ok(Self::OfficerNotActive(decoded));
             }
-            if let Ok(decoded) = <OfficialNotCreated as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <OfficerNotCreated as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::OfficialNotCreated(decoded));
+                return Ok(Self::OfficerNotCreated(decoded));
             }
-            if let Ok(decoded) = <OfficialNotDeactivated as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <OfficerNotDeactivated as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::OfficialNotDeactivated(decoded));
+                return Ok(Self::OfficerNotDeactivated(decoded));
             }
             if let Ok(decoded) = <PositionIndexOutOfRange as ::ethers::core::abi::AbiDecode>::decode(
                 data,
@@ -2094,7 +2083,7 @@ pub mod legal_document_manager {
                 Self::DivisionNotDeactivated(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::InvalidCreatedOfficialRole(element) => {
+                Self::InvalidCreatedOfficerRole(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
                 Self::InvalidSignature(element) => {
@@ -2115,16 +2104,16 @@ pub mod legal_document_manager {
                 Self::NullAddress(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::OfficialAlreadyCreated(element) => {
+                Self::OfficerAlreadyCreated(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::OfficialNotActive(element) => {
+                Self::OfficerNotActive(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::OfficialNotCreated(element) => {
+                Self::OfficerNotCreated(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::OfficialNotDeactivated(element) => {
+                Self::OfficerNotDeactivated(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
                 Self::PositionIndexOutOfRange(element) => {
@@ -2161,7 +2150,7 @@ pub mod legal_document_manager {
                     true
                 }
                 _ if selector
-                    == <InvalidCreatedOfficialRole as ::ethers::contract::EthError>::selector() => {
+                    == <InvalidCreatedOfficerRole as ::ethers::contract::EthError>::selector() => {
                     true
                 }
                 _ if selector
@@ -2187,19 +2176,19 @@ pub mod legal_document_manager {
                 _ if selector
                     == <NullAddress as ::ethers::contract::EthError>::selector() => true,
                 _ if selector
-                    == <OfficialAlreadyCreated as ::ethers::contract::EthError>::selector() => {
+                    == <OfficerAlreadyCreated as ::ethers::contract::EthError>::selector() => {
                     true
                 }
                 _ if selector
-                    == <OfficialNotActive as ::ethers::contract::EthError>::selector() => {
+                    == <OfficerNotActive as ::ethers::contract::EthError>::selector() => {
                     true
                 }
                 _ if selector
-                    == <OfficialNotCreated as ::ethers::contract::EthError>::selector() => {
+                    == <OfficerNotCreated as ::ethers::contract::EthError>::selector() => {
                     true
                 }
                 _ if selector
-                    == <OfficialNotDeactivated as ::ethers::contract::EthError>::selector() => {
+                    == <OfficerNotDeactivated as ::ethers::contract::EthError>::selector() => {
                     true
                 }
                 _ if selector
@@ -2231,7 +2220,7 @@ pub mod legal_document_manager {
                 Self::DivisionNotDeactivated(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
-                Self::InvalidCreatedOfficialRole(element) => {
+                Self::InvalidCreatedOfficerRole(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
                 Self::InvalidSignature(element) => ::core::fmt::Display::fmt(element, f),
@@ -2246,14 +2235,12 @@ pub mod legal_document_manager {
                 }
                 Self::NotTheSystemAdmin(element) => ::core::fmt::Display::fmt(element, f),
                 Self::NullAddress(element) => ::core::fmt::Display::fmt(element, f),
-                Self::OfficialAlreadyCreated(element) => {
+                Self::OfficerAlreadyCreated(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
-                Self::OfficialNotActive(element) => ::core::fmt::Display::fmt(element, f),
-                Self::OfficialNotCreated(element) => {
-                    ::core::fmt::Display::fmt(element, f)
-                }
-                Self::OfficialNotDeactivated(element) => {
+                Self::OfficerNotActive(element) => ::core::fmt::Display::fmt(element, f),
+                Self::OfficerNotCreated(element) => ::core::fmt::Display::fmt(element, f),
+                Self::OfficerNotDeactivated(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
                 Self::PositionIndexOutOfRange(element) => {
@@ -2294,10 +2281,10 @@ pub mod legal_document_manager {
             Self::DivisionNotDeactivated(value)
         }
     }
-    impl ::core::convert::From<InvalidCreatedOfficialRole>
+    impl ::core::convert::From<InvalidCreatedOfficerRole>
     for LegalDocumentManagerErrors {
-        fn from(value: InvalidCreatedOfficialRole) -> Self {
-            Self::InvalidCreatedOfficialRole(value)
+        fn from(value: InvalidCreatedOfficerRole) -> Self {
+            Self::InvalidCreatedOfficerRole(value)
         }
     }
     impl ::core::convert::From<InvalidSignature> for LegalDocumentManagerErrors {
@@ -2331,24 +2318,24 @@ pub mod legal_document_manager {
             Self::NullAddress(value)
         }
     }
-    impl ::core::convert::From<OfficialAlreadyCreated> for LegalDocumentManagerErrors {
-        fn from(value: OfficialAlreadyCreated) -> Self {
-            Self::OfficialAlreadyCreated(value)
+    impl ::core::convert::From<OfficerAlreadyCreated> for LegalDocumentManagerErrors {
+        fn from(value: OfficerAlreadyCreated) -> Self {
+            Self::OfficerAlreadyCreated(value)
         }
     }
-    impl ::core::convert::From<OfficialNotActive> for LegalDocumentManagerErrors {
-        fn from(value: OfficialNotActive) -> Self {
-            Self::OfficialNotActive(value)
+    impl ::core::convert::From<OfficerNotActive> for LegalDocumentManagerErrors {
+        fn from(value: OfficerNotActive) -> Self {
+            Self::OfficerNotActive(value)
         }
     }
-    impl ::core::convert::From<OfficialNotCreated> for LegalDocumentManagerErrors {
-        fn from(value: OfficialNotCreated) -> Self {
-            Self::OfficialNotCreated(value)
+    impl ::core::convert::From<OfficerNotCreated> for LegalDocumentManagerErrors {
+        fn from(value: OfficerNotCreated) -> Self {
+            Self::OfficerNotCreated(value)
         }
     }
-    impl ::core::convert::From<OfficialNotDeactivated> for LegalDocumentManagerErrors {
-        fn from(value: OfficialNotDeactivated) -> Self {
-            Self::OfficialNotDeactivated(value)
+    impl ::core::convert::From<OfficerNotDeactivated> for LegalDocumentManagerErrors {
+        fn from(value: OfficerNotDeactivated) -> Self {
+            Self::OfficerNotDeactivated(value)
         }
     }
     impl ::core::convert::From<PositionIndexOutOfRange> for LegalDocumentManagerErrors {
@@ -2459,13 +2446,13 @@ pub mod legal_document_manager {
         Hash
     )]
     #[ethevent(
-        name = "OfficialCreated",
-        abi = "OfficialCreated(address,(string,string,string),string,uint256,uint256,(string,uint8))"
+        name = "OfficerCreated",
+        abi = "OfficerCreated(address,(string,string,string),string,uint256,uint256,(string,uint8))"
     )]
-    pub struct OfficialCreatedFilter {
+    pub struct OfficerCreatedFilter {
         #[ethevent(indexed)]
-        pub official_address: ::ethers::core::types::Address,
-        pub info: OfficialInfo,
+        pub officer_address: ::ethers::core::types::Address,
+        pub info: OfficerInfo,
         pub division_id: ::std::string::String,
         pub creator_position_index: ::ethers::core::types::U256,
         pub position_index: ::ethers::core::types::U256,
@@ -2481,10 +2468,10 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    #[ethevent(name = "OfficialDeactivated", abi = "OfficialDeactivated(address)")]
-    pub struct OfficialDeactivatedFilter {
+    #[ethevent(name = "OfficerDeactivated", abi = "OfficerDeactivated(address)")]
+    pub struct OfficerDeactivatedFilter {
         #[ethevent(indexed)]
-        pub official_address: ::ethers::core::types::Address,
+        pub officer_address: ::ethers::core::types::Address,
     }
     #[derive(
         Clone,
@@ -2497,13 +2484,13 @@ pub mod legal_document_manager {
         Hash
     )]
     #[ethevent(
-        name = "OfficialInfoUpdated",
-        abi = "OfficialInfoUpdated(address,(string,string,string))"
+        name = "OfficerInfoUpdated",
+        abi = "OfficerInfoUpdated(address,(string,string,string))"
     )]
-    pub struct OfficialInfoUpdatedFilter {
+    pub struct OfficerInfoUpdatedFilter {
         #[ethevent(indexed)]
-        pub official_address: ::ethers::core::types::Address,
-        pub info: OfficialInfo,
+        pub officer_address: ::ethers::core::types::Address,
+        pub info: OfficerInfo,
     }
     #[derive(
         Clone,
@@ -2515,10 +2502,10 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    #[ethevent(name = "OfficialReactivated", abi = "OfficialReactivated(address)")]
-    pub struct OfficialReactivatedFilter {
+    #[ethevent(name = "OfficerReactivated", abi = "OfficerReactivated(address)")]
+    pub struct OfficerReactivatedFilter {
         #[ethevent(indexed)]
-        pub official_address: ::ethers::core::types::Address,
+        pub officer_address: ::ethers::core::types::Address,
     }
     #[derive(
         Clone,
@@ -2536,7 +2523,7 @@ pub mod legal_document_manager {
     )]
     pub struct PositionNameUpdatedFilter {
         #[ethevent(indexed)]
-        pub official_address: ::ethers::core::types::Address,
+        pub officer_address: ::ethers::core::types::Address,
         pub division_id: ::std::string::String,
         pub creator_position_index: ::ethers::core::types::U256,
         pub position_index: ::ethers::core::types::U256,
@@ -2558,7 +2545,7 @@ pub mod legal_document_manager {
     )]
     pub struct PositionRoleRevokedFilter {
         #[ethevent(indexed)]
-        pub official_address: ::ethers::core::types::Address,
+        pub officer_address: ::ethers::core::types::Address,
         pub division_id: ::std::string::String,
         pub creator_position_index: ::ethers::core::types::U256,
         pub position_index: ::ethers::core::types::U256,
@@ -2579,7 +2566,7 @@ pub mod legal_document_manager {
     )]
     pub struct PositionRoleUpdatedFilter {
         #[ethevent(indexed)]
-        pub official_address: ::ethers::core::types::Address,
+        pub officer_address: ::ethers::core::types::Address,
         pub division_id: ::std::string::String,
         pub creator_position_index: ::ethers::core::types::U256,
         pub position_index: ::ethers::core::types::U256,
@@ -2608,10 +2595,10 @@ pub mod legal_document_manager {
         DivisionReactivatedFilter(DivisionReactivatedFilter),
         DivisionUpdatedFilter(DivisionUpdatedFilter),
         DocumentSubmittedFilter(DocumentSubmittedFilter),
-        OfficialCreatedFilter(OfficialCreatedFilter),
-        OfficialDeactivatedFilter(OfficialDeactivatedFilter),
-        OfficialInfoUpdatedFilter(OfficialInfoUpdatedFilter),
-        OfficialReactivatedFilter(OfficialReactivatedFilter),
+        OfficerCreatedFilter(OfficerCreatedFilter),
+        OfficerDeactivatedFilter(OfficerDeactivatedFilter),
+        OfficerInfoUpdatedFilter(OfficerInfoUpdatedFilter),
+        OfficerReactivatedFilter(OfficerReactivatedFilter),
         PositionNameUpdatedFilter(PositionNameUpdatedFilter),
         PositionRoleRevokedFilter(PositionRoleRevokedFilter),
         PositionRoleUpdatedFilter(PositionRoleUpdatedFilter),
@@ -2640,23 +2627,17 @@ pub mod legal_document_manager {
             if let Ok(decoded) = DocumentSubmittedFilter::decode_log(log) {
                 return Ok(LegalDocumentManagerEvents::DocumentSubmittedFilter(decoded));
             }
-            if let Ok(decoded) = OfficialCreatedFilter::decode_log(log) {
-                return Ok(LegalDocumentManagerEvents::OfficialCreatedFilter(decoded));
+            if let Ok(decoded) = OfficerCreatedFilter::decode_log(log) {
+                return Ok(LegalDocumentManagerEvents::OfficerCreatedFilter(decoded));
             }
-            if let Ok(decoded) = OfficialDeactivatedFilter::decode_log(log) {
-                return Ok(
-                    LegalDocumentManagerEvents::OfficialDeactivatedFilter(decoded),
-                );
+            if let Ok(decoded) = OfficerDeactivatedFilter::decode_log(log) {
+                return Ok(LegalDocumentManagerEvents::OfficerDeactivatedFilter(decoded));
             }
-            if let Ok(decoded) = OfficialInfoUpdatedFilter::decode_log(log) {
-                return Ok(
-                    LegalDocumentManagerEvents::OfficialInfoUpdatedFilter(decoded),
-                );
+            if let Ok(decoded) = OfficerInfoUpdatedFilter::decode_log(log) {
+                return Ok(LegalDocumentManagerEvents::OfficerInfoUpdatedFilter(decoded));
             }
-            if let Ok(decoded) = OfficialReactivatedFilter::decode_log(log) {
-                return Ok(
-                    LegalDocumentManagerEvents::OfficialReactivatedFilter(decoded),
-                );
+            if let Ok(decoded) = OfficerReactivatedFilter::decode_log(log) {
+                return Ok(LegalDocumentManagerEvents::OfficerReactivatedFilter(decoded));
             }
             if let Ok(decoded) = PositionNameUpdatedFilter::decode_log(log) {
                 return Ok(
@@ -2697,16 +2678,16 @@ pub mod legal_document_manager {
                 Self::DocumentSubmittedFilter(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
-                Self::OfficialCreatedFilter(element) => {
+                Self::OfficerCreatedFilter(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
-                Self::OfficialDeactivatedFilter(element) => {
+                Self::OfficerDeactivatedFilter(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
-                Self::OfficialInfoUpdatedFilter(element) => {
+                Self::OfficerInfoUpdatedFilter(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
-                Self::OfficialReactivatedFilter(element) => {
+                Self::OfficerReactivatedFilter(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
                 Self::PositionNameUpdatedFilter(element) => {
@@ -2751,27 +2732,24 @@ pub mod legal_document_manager {
             Self::DocumentSubmittedFilter(value)
         }
     }
-    impl ::core::convert::From<OfficialCreatedFilter> for LegalDocumentManagerEvents {
-        fn from(value: OfficialCreatedFilter) -> Self {
-            Self::OfficialCreatedFilter(value)
+    impl ::core::convert::From<OfficerCreatedFilter> for LegalDocumentManagerEvents {
+        fn from(value: OfficerCreatedFilter) -> Self {
+            Self::OfficerCreatedFilter(value)
         }
     }
-    impl ::core::convert::From<OfficialDeactivatedFilter>
-    for LegalDocumentManagerEvents {
-        fn from(value: OfficialDeactivatedFilter) -> Self {
-            Self::OfficialDeactivatedFilter(value)
+    impl ::core::convert::From<OfficerDeactivatedFilter> for LegalDocumentManagerEvents {
+        fn from(value: OfficerDeactivatedFilter) -> Self {
+            Self::OfficerDeactivatedFilter(value)
         }
     }
-    impl ::core::convert::From<OfficialInfoUpdatedFilter>
-    for LegalDocumentManagerEvents {
-        fn from(value: OfficialInfoUpdatedFilter) -> Self {
-            Self::OfficialInfoUpdatedFilter(value)
+    impl ::core::convert::From<OfficerInfoUpdatedFilter> for LegalDocumentManagerEvents {
+        fn from(value: OfficerInfoUpdatedFilter) -> Self {
+            Self::OfficerInfoUpdatedFilter(value)
         }
     }
-    impl ::core::convert::From<OfficialReactivatedFilter>
-    for LegalDocumentManagerEvents {
-        fn from(value: OfficialReactivatedFilter) -> Self {
-            Self::OfficialReactivatedFilter(value)
+    impl ::core::convert::From<OfficerReactivatedFilter> for LegalDocumentManagerEvents {
+        fn from(value: OfficerReactivatedFilter) -> Self {
+            Self::OfficerReactivatedFilter(value)
         }
     }
     impl ::core::convert::From<PositionNameUpdatedFilter>
@@ -2814,7 +2792,7 @@ pub mod legal_document_manager {
         pub name: ::std::string::String,
         pub supervisory_div_id: ::std::string::String,
     }
-    ///Container type for all input parameters for the `createOfficial` function with signature `createOfficial(address,(string,string,string),string,uint256,(string,uint8))` and selector `0x42927c35`
+    ///Container type for all input parameters for the `createOfficer` function with signature `createOfficer(address,(string,string,string),string,uint256,(string,uint8))` and selector `0x379f8801`
     #[derive(
         Clone,
         ::ethers::contract::EthCall,
@@ -2826,12 +2804,12 @@ pub mod legal_document_manager {
         Hash
     )]
     #[ethcall(
-        name = "createOfficial",
-        abi = "createOfficial(address,(string,string,string),string,uint256,(string,uint8))"
+        name = "createOfficer",
+        abi = "createOfficer(address,(string,string,string),string,uint256,(string,uint8))"
     )]
-    pub struct CreateOfficialCall {
-        pub official_address: ::ethers::core::types::Address,
-        pub info: OfficialInfo,
+    pub struct CreateOfficerCall {
+        pub officer_address: ::ethers::core::types::Address,
+        pub info: OfficerInfo,
         pub division_id: ::std::string::String,
         pub creator_position_index: ::ethers::core::types::U256,
         pub position: Position,
@@ -2851,7 +2829,7 @@ pub mod legal_document_manager {
     pub struct DeactivateDivisionCall {
         pub division_id: ::std::string::String,
     }
-    ///Container type for all input parameters for the `deactivateOfficial` function with signature `deactivateOfficial(address)` and selector `0x2ccfa5d7`
+    ///Container type for all input parameters for the `deactivateOfficer` function with signature `deactivateOfficer(address)` and selector `0x4719c01d`
     #[derive(
         Clone,
         ::ethers::contract::EthCall,
@@ -2862,9 +2840,9 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    #[ethcall(name = "deactivateOfficial", abi = "deactivateOfficial(address)")]
-    pub struct DeactivateOfficialCall {
-        pub official_address: ::ethers::core::types::Address,
+    #[ethcall(name = "deactivateOfficer", abi = "deactivateOfficer(address)")]
+    pub struct DeactivateOfficerCall {
+        pub officer_address: ::ethers::core::types::Address,
     }
     ///Container type for all input parameters for the `getDivision` function with signature `getDivision(string)` and selector `0xf1aba969`
     #[derive(
@@ -2881,7 +2859,7 @@ pub mod legal_document_manager {
     pub struct GetDivisionCall {
         pub division_id: ::std::string::String,
     }
-    ///Container type for all input parameters for the `getOfficialInfo` function with signature `getOfficialInfo(address)` and selector `0x8fcadd06`
+    ///Container type for all input parameters for the `getOfficerInfo` function with signature `getOfficerInfo(address)` and selector `0xd25bd7a8`
     #[derive(
         Clone,
         ::ethers::contract::EthCall,
@@ -2892,11 +2870,11 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    #[ethcall(name = "getOfficialInfo", abi = "getOfficialInfo(address)")]
-    pub struct GetOfficialInfoCall {
-        pub official_address: ::ethers::core::types::Address,
+    #[ethcall(name = "getOfficerInfo", abi = "getOfficerInfo(address)")]
+    pub struct GetOfficerInfoCall {
+        pub officer_address: ::ethers::core::types::Address,
     }
-    ///Container type for all input parameters for the `getOfficialPosition` function with signature `getOfficialPosition(address,string,uint256)` and selector `0x79ec5273`
+    ///Container type for all input parameters for the `getOfficerPosition` function with signature `getOfficerPosition(address,string,uint256)` and selector `0x54423f36`
     #[derive(
         Clone,
         ::ethers::contract::EthCall,
@@ -2908,15 +2886,15 @@ pub mod legal_document_manager {
         Hash
     )]
     #[ethcall(
-        name = "getOfficialPosition",
-        abi = "getOfficialPosition(address,string,uint256)"
+        name = "getOfficerPosition",
+        abi = "getOfficerPosition(address,string,uint256)"
     )]
-    pub struct GetOfficialPositionCall {
-        pub official_address: ::ethers::core::types::Address,
+    pub struct GetOfficerPositionCall {
+        pub officer_address: ::ethers::core::types::Address,
         pub division_id: ::std::string::String,
         pub position_index: ::ethers::core::types::U256,
     }
-    ///Container type for all input parameters for the `getOfficialPositions` function with signature `getOfficialPositions(address,string)` and selector `0x67e605e5`
+    ///Container type for all input parameters for the `getOfficerPositions` function with signature `getOfficerPositions(address,string)` and selector `0x562d258e`
     #[derive(
         Clone,
         ::ethers::contract::EthCall,
@@ -2927,12 +2905,9 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    #[ethcall(
-        name = "getOfficialPositions",
-        abi = "getOfficialPositions(address,string)"
-    )]
-    pub struct GetOfficialPositionsCall {
-        pub official_address: ::ethers::core::types::Address,
+    #[ethcall(name = "getOfficerPositions", abi = "getOfficerPositions(address,string)")]
+    pub struct GetOfficerPositionsCall {
+        pub officer_address: ::ethers::core::types::Address,
         pub division_id: ::std::string::String,
     }
     ///Container type for all input parameters for the `getSystemAdmin` function with signature `getSystemAdmin()` and selector `0x35a13597`
@@ -2963,7 +2938,7 @@ pub mod legal_document_manager {
     pub struct ReactivateDivisionCall {
         pub division_id: ::std::string::String,
     }
-    ///Container type for all input parameters for the `reactivateOfficial` function with signature `reactivateOfficial(address)` and selector `0x49031411`
+    ///Container type for all input parameters for the `reactivateOfficer` function with signature `reactivateOfficer(address)` and selector `0x0cda2a94`
     #[derive(
         Clone,
         ::ethers::contract::EthCall,
@@ -2974,9 +2949,9 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    #[ethcall(name = "reactivateOfficial", abi = "reactivateOfficial(address)")]
-    pub struct ReactivateOfficialCall {
-        pub official_address: ::ethers::core::types::Address,
+    #[ethcall(name = "reactivateOfficer", abi = "reactivateOfficer(address)")]
+    pub struct ReactivateOfficerCall {
+        pub officer_address: ::ethers::core::types::Address,
     }
     ///Container type for all input parameters for the `revokePositionRole` function with signature `revokePositionRole(address,string,uint256,uint256)` and selector `0x0c7505f2`
     #[derive(
@@ -2994,7 +2969,7 @@ pub mod legal_document_manager {
         abi = "revokePositionRole(address,string,uint256,uint256)"
     )]
     pub struct RevokePositionRoleCall {
-        pub official_address: ::ethers::core::types::Address,
+        pub officer_address: ::ethers::core::types::Address,
         pub division_id: ::std::string::String,
         pub creator_position_index: ::ethers::core::types::U256,
         pub position_index: ::ethers::core::types::U256,
@@ -3038,7 +3013,7 @@ pub mod legal_document_manager {
         pub new_name: ::std::string::String,
         pub new_supervisory_div_id: ::std::string::String,
     }
-    ///Container type for all input parameters for the `updateOfficialInfo` function with signature `updateOfficialInfo(address,(string,string,string))` and selector `0xe33320a1`
+    ///Container type for all input parameters for the `updateOfficerInfo` function with signature `updateOfficerInfo(address,(string,string,string))` and selector `0x6cc251ec`
     #[derive(
         Clone,
         ::ethers::contract::EthCall,
@@ -3050,12 +3025,12 @@ pub mod legal_document_manager {
         Hash
     )]
     #[ethcall(
-        name = "updateOfficialInfo",
-        abi = "updateOfficialInfo(address,(string,string,string))"
+        name = "updateOfficerInfo",
+        abi = "updateOfficerInfo(address,(string,string,string))"
     )]
-    pub struct UpdateOfficialInfoCall {
-        pub official_address: ::ethers::core::types::Address,
-        pub info: OfficialInfo,
+    pub struct UpdateOfficerInfoCall {
+        pub officer_address: ::ethers::core::types::Address,
+        pub info: OfficerInfo,
     }
     ///Container type for all input parameters for the `updatePositionName` function with signature `updatePositionName(address,string,uint256,uint256,string)` and selector `0x64da9222`
     #[derive(
@@ -3073,7 +3048,7 @@ pub mod legal_document_manager {
         abi = "updatePositionName(address,string,uint256,uint256,string)"
     )]
     pub struct UpdatePositionNameCall {
-        pub official_address: ::ethers::core::types::Address,
+        pub officer_address: ::ethers::core::types::Address,
         pub division_id: ::std::string::String,
         pub creator_position_index: ::ethers::core::types::U256,
         pub position_index: ::ethers::core::types::U256,
@@ -3095,7 +3070,7 @@ pub mod legal_document_manager {
         abi = "updatePositionRole(address,string,uint256,uint256,uint8)"
     )]
     pub struct UpdatePositionRoleCall {
-        pub official_address: ::ethers::core::types::Address,
+        pub officer_address: ::ethers::core::types::Address,
         pub division_id: ::std::string::String,
         pub creator_position_index: ::ethers::core::types::U256,
         pub position_index: ::ethers::core::types::U256,
@@ -3120,20 +3095,20 @@ pub mod legal_document_manager {
     #[derive(Clone, ::ethers::contract::EthAbiType, Debug, PartialEq, Eq, Hash)]
     pub enum LegalDocumentManagerCalls {
         CreateDivision(CreateDivisionCall),
-        CreateOfficial(CreateOfficialCall),
+        CreateOfficer(CreateOfficerCall),
         DeactivateDivision(DeactivateDivisionCall),
-        DeactivateOfficial(DeactivateOfficialCall),
+        DeactivateOfficer(DeactivateOfficerCall),
         GetDivision(GetDivisionCall),
-        GetOfficialInfo(GetOfficialInfoCall),
-        GetOfficialPosition(GetOfficialPositionCall),
-        GetOfficialPositions(GetOfficialPositionsCall),
+        GetOfficerInfo(GetOfficerInfoCall),
+        GetOfficerPosition(GetOfficerPositionCall),
+        GetOfficerPositions(GetOfficerPositionsCall),
         GetSystemAdmin(GetSystemAdminCall),
         ReactivateDivision(ReactivateDivisionCall),
-        ReactivateOfficial(ReactivateOfficialCall),
+        ReactivateOfficer(ReactivateOfficerCall),
         RevokePositionRole(RevokePositionRoleCall),
         SubmitDocument(SubmitDocumentCall),
         UpdateDivision(UpdateDivisionCall),
-        UpdateOfficialInfo(UpdateOfficialInfoCall),
+        UpdateOfficerInfo(UpdateOfficerInfoCall),
         UpdatePositionName(UpdatePositionNameCall),
         UpdatePositionRole(UpdatePositionRoleCall),
         UpdateSystemAdmin(UpdateSystemAdminCall),
@@ -3148,40 +3123,40 @@ pub mod legal_document_manager {
             ) {
                 return Ok(Self::CreateDivision(decoded));
             }
-            if let Ok(decoded) = <CreateOfficialCall as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <CreateOfficerCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::CreateOfficial(decoded));
+                return Ok(Self::CreateOfficer(decoded));
             }
             if let Ok(decoded) = <DeactivateDivisionCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
                 return Ok(Self::DeactivateDivision(decoded));
             }
-            if let Ok(decoded) = <DeactivateOfficialCall as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <DeactivateOfficerCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::DeactivateOfficial(decoded));
+                return Ok(Self::DeactivateOfficer(decoded));
             }
             if let Ok(decoded) = <GetDivisionCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
                 return Ok(Self::GetDivision(decoded));
             }
-            if let Ok(decoded) = <GetOfficialInfoCall as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <GetOfficerInfoCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::GetOfficialInfo(decoded));
+                return Ok(Self::GetOfficerInfo(decoded));
             }
-            if let Ok(decoded) = <GetOfficialPositionCall as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <GetOfficerPositionCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::GetOfficialPosition(decoded));
+                return Ok(Self::GetOfficerPosition(decoded));
             }
-            if let Ok(decoded) = <GetOfficialPositionsCall as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <GetOfficerPositionsCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::GetOfficialPositions(decoded));
+                return Ok(Self::GetOfficerPositions(decoded));
             }
             if let Ok(decoded) = <GetSystemAdminCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
@@ -3193,10 +3168,10 @@ pub mod legal_document_manager {
             ) {
                 return Ok(Self::ReactivateDivision(decoded));
             }
-            if let Ok(decoded) = <ReactivateOfficialCall as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <ReactivateOfficerCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::ReactivateOfficial(decoded));
+                return Ok(Self::ReactivateOfficer(decoded));
             }
             if let Ok(decoded) = <RevokePositionRoleCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
@@ -3213,10 +3188,10 @@ pub mod legal_document_manager {
             ) {
                 return Ok(Self::UpdateDivision(decoded));
             }
-            if let Ok(decoded) = <UpdateOfficialInfoCall as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <UpdateOfficerInfoCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::UpdateOfficialInfo(decoded));
+                return Ok(Self::UpdateOfficerInfo(decoded));
             }
             if let Ok(decoded) = <UpdatePositionNameCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
@@ -3242,25 +3217,25 @@ pub mod legal_document_manager {
                 Self::CreateDivision(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::CreateOfficial(element) => {
+                Self::CreateOfficer(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
                 Self::DeactivateDivision(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::DeactivateOfficial(element) => {
+                Self::DeactivateOfficer(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
                 Self::GetDivision(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::GetOfficialInfo(element) => {
+                Self::GetOfficerInfo(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::GetOfficialPosition(element) => {
+                Self::GetOfficerPosition(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::GetOfficialPositions(element) => {
+                Self::GetOfficerPositions(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
                 Self::GetSystemAdmin(element) => {
@@ -3269,7 +3244,7 @@ pub mod legal_document_manager {
                 Self::ReactivateDivision(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::ReactivateOfficial(element) => {
+                Self::ReactivateOfficer(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
                 Self::RevokePositionRole(element) => {
@@ -3281,7 +3256,7 @@ pub mod legal_document_manager {
                 Self::UpdateDivision(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::UpdateOfficialInfo(element) => {
+                Self::UpdateOfficerInfo(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
                 Self::UpdatePositionName(element) => {
@@ -3300,36 +3275,30 @@ pub mod legal_document_manager {
         fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
             match self {
                 Self::CreateDivision(element) => ::core::fmt::Display::fmt(element, f),
-                Self::CreateOfficial(element) => ::core::fmt::Display::fmt(element, f),
+                Self::CreateOfficer(element) => ::core::fmt::Display::fmt(element, f),
                 Self::DeactivateDivision(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
-                Self::DeactivateOfficial(element) => {
-                    ::core::fmt::Display::fmt(element, f)
-                }
+                Self::DeactivateOfficer(element) => ::core::fmt::Display::fmt(element, f),
                 Self::GetDivision(element) => ::core::fmt::Display::fmt(element, f),
-                Self::GetOfficialInfo(element) => ::core::fmt::Display::fmt(element, f),
-                Self::GetOfficialPosition(element) => {
+                Self::GetOfficerInfo(element) => ::core::fmt::Display::fmt(element, f),
+                Self::GetOfficerPosition(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
-                Self::GetOfficialPositions(element) => {
+                Self::GetOfficerPositions(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
                 Self::GetSystemAdmin(element) => ::core::fmt::Display::fmt(element, f),
                 Self::ReactivateDivision(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
-                Self::ReactivateOfficial(element) => {
-                    ::core::fmt::Display::fmt(element, f)
-                }
+                Self::ReactivateOfficer(element) => ::core::fmt::Display::fmt(element, f),
                 Self::RevokePositionRole(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
                 Self::SubmitDocument(element) => ::core::fmt::Display::fmt(element, f),
                 Self::UpdateDivision(element) => ::core::fmt::Display::fmt(element, f),
-                Self::UpdateOfficialInfo(element) => {
-                    ::core::fmt::Display::fmt(element, f)
-                }
+                Self::UpdateOfficerInfo(element) => ::core::fmt::Display::fmt(element, f),
                 Self::UpdatePositionName(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
@@ -3345,9 +3314,9 @@ pub mod legal_document_manager {
             Self::CreateDivision(value)
         }
     }
-    impl ::core::convert::From<CreateOfficialCall> for LegalDocumentManagerCalls {
-        fn from(value: CreateOfficialCall) -> Self {
-            Self::CreateOfficial(value)
+    impl ::core::convert::From<CreateOfficerCall> for LegalDocumentManagerCalls {
+        fn from(value: CreateOfficerCall) -> Self {
+            Self::CreateOfficer(value)
         }
     }
     impl ::core::convert::From<DeactivateDivisionCall> for LegalDocumentManagerCalls {
@@ -3355,9 +3324,9 @@ pub mod legal_document_manager {
             Self::DeactivateDivision(value)
         }
     }
-    impl ::core::convert::From<DeactivateOfficialCall> for LegalDocumentManagerCalls {
-        fn from(value: DeactivateOfficialCall) -> Self {
-            Self::DeactivateOfficial(value)
+    impl ::core::convert::From<DeactivateOfficerCall> for LegalDocumentManagerCalls {
+        fn from(value: DeactivateOfficerCall) -> Self {
+            Self::DeactivateOfficer(value)
         }
     }
     impl ::core::convert::From<GetDivisionCall> for LegalDocumentManagerCalls {
@@ -3365,19 +3334,19 @@ pub mod legal_document_manager {
             Self::GetDivision(value)
         }
     }
-    impl ::core::convert::From<GetOfficialInfoCall> for LegalDocumentManagerCalls {
-        fn from(value: GetOfficialInfoCall) -> Self {
-            Self::GetOfficialInfo(value)
+    impl ::core::convert::From<GetOfficerInfoCall> for LegalDocumentManagerCalls {
+        fn from(value: GetOfficerInfoCall) -> Self {
+            Self::GetOfficerInfo(value)
         }
     }
-    impl ::core::convert::From<GetOfficialPositionCall> for LegalDocumentManagerCalls {
-        fn from(value: GetOfficialPositionCall) -> Self {
-            Self::GetOfficialPosition(value)
+    impl ::core::convert::From<GetOfficerPositionCall> for LegalDocumentManagerCalls {
+        fn from(value: GetOfficerPositionCall) -> Self {
+            Self::GetOfficerPosition(value)
         }
     }
-    impl ::core::convert::From<GetOfficialPositionsCall> for LegalDocumentManagerCalls {
-        fn from(value: GetOfficialPositionsCall) -> Self {
-            Self::GetOfficialPositions(value)
+    impl ::core::convert::From<GetOfficerPositionsCall> for LegalDocumentManagerCalls {
+        fn from(value: GetOfficerPositionsCall) -> Self {
+            Self::GetOfficerPositions(value)
         }
     }
     impl ::core::convert::From<GetSystemAdminCall> for LegalDocumentManagerCalls {
@@ -3390,9 +3359,9 @@ pub mod legal_document_manager {
             Self::ReactivateDivision(value)
         }
     }
-    impl ::core::convert::From<ReactivateOfficialCall> for LegalDocumentManagerCalls {
-        fn from(value: ReactivateOfficialCall) -> Self {
-            Self::ReactivateOfficial(value)
+    impl ::core::convert::From<ReactivateOfficerCall> for LegalDocumentManagerCalls {
+        fn from(value: ReactivateOfficerCall) -> Self {
+            Self::ReactivateOfficer(value)
         }
     }
     impl ::core::convert::From<RevokePositionRoleCall> for LegalDocumentManagerCalls {
@@ -3410,9 +3379,9 @@ pub mod legal_document_manager {
             Self::UpdateDivision(value)
         }
     }
-    impl ::core::convert::From<UpdateOfficialInfoCall> for LegalDocumentManagerCalls {
-        fn from(value: UpdateOfficialInfoCall) -> Self {
-            Self::UpdateOfficialInfo(value)
+    impl ::core::convert::From<UpdateOfficerInfoCall> for LegalDocumentManagerCalls {
+        fn from(value: UpdateOfficerInfoCall) -> Self {
+            Self::UpdateOfficerInfo(value)
         }
     }
     impl ::core::convert::From<UpdatePositionNameCall> for LegalDocumentManagerCalls {
@@ -3444,7 +3413,7 @@ pub mod legal_document_manager {
     pub struct GetDivisionReturn {
         pub division: Division,
     }
-    ///Container type for all return fields from the `getOfficialInfo` function with signature `getOfficialInfo(address)` and selector `0x8fcadd06`
+    ///Container type for all return fields from the `getOfficerInfo` function with signature `getOfficerInfo(address)` and selector `0xd25bd7a8`
     #[derive(
         Clone,
         ::ethers::contract::EthAbiType,
@@ -3455,10 +3424,10 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    pub struct GetOfficialInfoReturn {
-        pub official: Official,
+    pub struct GetOfficerInfoReturn {
+        pub officer: Officer,
     }
-    ///Container type for all return fields from the `getOfficialPosition` function with signature `getOfficialPosition(address,string,uint256)` and selector `0x79ec5273`
+    ///Container type for all return fields from the `getOfficerPosition` function with signature `getOfficerPosition(address,string,uint256)` and selector `0x54423f36`
     #[derive(
         Clone,
         ::ethers::contract::EthAbiType,
@@ -3469,10 +3438,10 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    pub struct GetOfficialPositionReturn {
+    pub struct GetOfficerPositionReturn {
         pub position: Position,
     }
-    ///Container type for all return fields from the `getOfficialPositions` function with signature `getOfficialPositions(address,string)` and selector `0x67e605e5`
+    ///Container type for all return fields from the `getOfficerPositions` function with signature `getOfficerPositions(address,string)` and selector `0x562d258e`
     #[derive(
         Clone,
         ::ethers::contract::EthAbiType,
@@ -3483,7 +3452,7 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    pub struct GetOfficialPositionsReturn {
+    pub struct GetOfficerPositionsReturn {
         pub positions: ::std::vec::Vec<Position>,
     }
     ///Container type for all return fields from the `getSystemAdmin` function with signature `getSystemAdmin()` and selector `0x35a13597`
@@ -3516,7 +3485,7 @@ pub mod legal_document_manager {
         pub name: ::std::string::String,
         pub supervisory_div_id: ::std::string::String,
     }
-    ///`Official((string,string,string),uint8)`
+    ///`Officer((string,string,string),uint8)`
     #[derive(
         Clone,
         ::ethers::contract::EthAbiType,
@@ -3527,11 +3496,11 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    pub struct Official {
-        pub info: OfficialInfo,
+    pub struct Officer {
+        pub info: OfficerInfo,
         pub status: u8,
     }
-    ///`OfficialInfo(string,string,string)`
+    ///`OfficerInfo(string,string,string)`
     #[derive(
         Clone,
         ::ethers::contract::EthAbiType,
@@ -3542,7 +3511,7 @@ pub mod legal_document_manager {
         Eq,
         Hash
     )]
-    pub struct OfficialInfo {
+    pub struct OfficerInfo {
         pub name: ::std::string::String,
         pub sex: ::std::string::String,
         pub date_of_birth: ::std::string::String,

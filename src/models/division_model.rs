@@ -76,7 +76,7 @@ impl ToSql for DivisionStatus {
 }
 
 #[derive(PostgresMapper, Debug)]
-#[pg_mapper(table = "officials")]
+#[pg_mapper(table = "divisions")]
 pub struct Division {
     pub id: i64,
     pub onchain_id: String,

@@ -21,7 +21,7 @@
   },
   {
     "inputs": [],
-    "name": "InvalidCreatedOfficialRole",
+    "name": "InvalidCreatedOfficerRole",
     "type": "error"
   },
   {
@@ -56,22 +56,22 @@
   },
   {
     "inputs": [],
-    "name": "OfficialAlreadyCreated",
+    "name": "OfficerAlreadyCreated",
     "type": "error"
   },
   {
     "inputs": [],
-    "name": "OfficialNotActive",
+    "name": "OfficerNotActive",
     "type": "error"
   },
   {
     "inputs": [],
-    "name": "OfficialNotCreated",
+    "name": "OfficerNotCreated",
     "type": "error"
   },
   {
     "inputs": [],
-    "name": "OfficialNotDeactivated",
+    "name": "OfficerNotDeactivated",
     "type": "error"
   },
   {
@@ -202,7 +202,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       },
       {
@@ -224,7 +224,7 @@
           }
         ],
         "indexed": false,
-        "internalType": "struct IOfficialManager.OfficialInfo",
+        "internalType": "struct IOfficerManager.OfficerInfo",
         "name": "info",
         "type": "tuple"
       },
@@ -260,12 +260,12 @@
           }
         ],
         "indexed": false,
-        "internalType": "struct IOfficialManager.Position",
+        "internalType": "struct IOfficerManager.Position",
         "name": "position",
         "type": "tuple"
       }
     ],
-    "name": "OfficialCreated",
+    "name": "OfficerCreated",
     "type": "event"
   },
   {
@@ -274,11 +274,11 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       }
     ],
-    "name": "OfficialDeactivated",
+    "name": "OfficerDeactivated",
     "type": "event"
   },
   {
@@ -287,7 +287,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       },
       {
@@ -309,12 +309,12 @@
           }
         ],
         "indexed": false,
-        "internalType": "struct IOfficialManager.OfficialInfo",
+        "internalType": "struct IOfficerManager.OfficerInfo",
         "name": "info",
         "type": "tuple"
       }
     ],
-    "name": "OfficialInfoUpdated",
+    "name": "OfficerInfoUpdated",
     "type": "event"
   },
   {
@@ -323,11 +323,11 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       }
     ],
-    "name": "OfficialReactivated",
+    "name": "OfficerReactivated",
     "type": "event"
   },
   {
@@ -336,7 +336,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       },
       {
@@ -373,7 +373,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       },
       {
@@ -404,7 +404,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       },
       {
@@ -475,7 +475,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       },
       {
@@ -496,7 +496,7 @@
             "type": "string"
           }
         ],
-        "internalType": "struct IOfficialManager.OfficialInfo",
+        "internalType": "struct IOfficerManager.OfficerInfo",
         "name": "info",
         "type": "tuple"
       },
@@ -523,12 +523,12 @@
             "type": "uint8"
           }
         ],
-        "internalType": "struct IOfficialManager.Position",
+        "internalType": "struct IOfficerManager.Position",
         "name": "position",
         "type": "tuple"
       }
     ],
-    "name": "createOfficial",
+    "name": "createOfficer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -550,11 +550,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       }
     ],
-    "name": "deactivateOfficial",
+    "name": "deactivateOfficer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -599,11 +599,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       }
     ],
-    "name": "getOfficialInfo",
+    "name": "getOfficerInfo",
     "outputs": [
       {
         "components": [
@@ -625,18 +625,18 @@
                 "type": "string"
               }
             ],
-            "internalType": "struct IOfficialManager.OfficialInfo",
+            "internalType": "struct IOfficerManager.OfficerInfo",
             "name": "info",
             "type": "tuple"
           },
           {
-            "internalType": "enum OfficialStatus",
+            "internalType": "enum OfficerStatus",
             "name": "status",
             "type": "uint8"
           }
         ],
-        "internalType": "struct IOfficialManager.Official",
-        "name": "official",
+        "internalType": "struct IOfficerManager.Officer",
+        "name": "officer",
         "type": "tuple"
       }
     ],
@@ -647,7 +647,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       },
       {
@@ -661,7 +661,7 @@
         "type": "uint256"
       }
     ],
-    "name": "getOfficialPosition",
+    "name": "getOfficerPosition",
     "outputs": [
       {
         "components": [
@@ -676,7 +676,7 @@
             "type": "uint8"
           }
         ],
-        "internalType": "struct IOfficialManager.Position",
+        "internalType": "struct IOfficerManager.Position",
         "name": "position",
         "type": "tuple"
       }
@@ -688,7 +688,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       },
       {
@@ -697,7 +697,7 @@
         "type": "string"
       }
     ],
-    "name": "getOfficialPositions",
+    "name": "getOfficerPositions",
     "outputs": [
       {
         "components": [
@@ -712,7 +712,7 @@
             "type": "uint8"
           }
         ],
-        "internalType": "struct IOfficialManager.Position[]",
+        "internalType": "struct IOfficerManager.Position[]",
         "name": "positions",
         "type": "tuple[]"
       }
@@ -750,11 +750,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       }
     ],
-    "name": "reactivateOfficial",
+    "name": "reactivateOfficer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -763,7 +763,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       },
       {
@@ -847,7 +847,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       },
       {
@@ -868,12 +868,12 @@
             "type": "string"
           }
         ],
-        "internalType": "struct IOfficialManager.OfficialInfo",
+        "internalType": "struct IOfficerManager.OfficerInfo",
         "name": "info",
         "type": "tuple"
       }
     ],
-    "name": "updateOfficialInfo",
+    "name": "updateOfficerInfo",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -882,7 +882,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       },
       {
@@ -915,7 +915,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "officialAddress",
+        "name": "officerAddress",
         "type": "address"
       },
       {

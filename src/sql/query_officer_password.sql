@@ -1,3 +1,3 @@
 SELECT "password"
-FROM "officials"
+FROM "officers"
 WHERE "username" = $1;

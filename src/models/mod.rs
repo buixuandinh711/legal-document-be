@@ -1,2 +1,2 @@
 pub mod division_model;
-pub mod official;
+pub mod officier_model;

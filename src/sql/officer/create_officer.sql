@@ -1,12 +1,14 @@
-INSERT INTO "officials" (
+INSERT INTO "officers" (
         "username",
-        "address",
+        "password",
+        "onchain_address",
+        "private_key",
         "name",
         "date_of_birth",
         "sex",
         "status",
-        "password",
-        "private_key"
+        "transaction_hash",
+        "finalized"
     )
 VALUES (
         $1,
@@ -16,5 +18,7 @@ VALUES (
         $5,
         $6,
         $7,
-        $8
+        $8,
+        $9,
+        $10
     );
