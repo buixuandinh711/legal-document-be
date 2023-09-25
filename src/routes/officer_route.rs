@@ -3,7 +3,10 @@ mod routes {
     use deadpool_postgres::Pool;
     use serde::Deserialize;
 
-    use crate::models::officier_model::{self, CreateOfficerInfo, OfficerModelError};
+    use crate::models::{
+        officier_model::{self, CreateOfficerInfo},
+        ModelError,
+    };
 
     #[derive(Deserialize, Debug)]
     struct CreateOfficerBody {
@@ -11,10 +14,6 @@ mod routes {
         pub password: String,
         pub onchain_address: String,
         pub private_key: String,
-        pub name: String,
-        pub date_of_birth: String,
-        pub sex: String,
-        pub transaction_hash: String,
     }
 
     impl From<CreateOfficerBody> for CreateOfficerInfo {
@@ -24,10 +23,6 @@ mod routes {
                 password: body.password,
                 onchain_address: body.onchain_address,
                 private_key: body.private_key,
-                name: body.name,
-                date_of_birth: body.date_of_birth,
-                sex: body.sex,
-                transaction_hash: body.transaction_hash,
             }
         }
     }
@@ -44,7 +39,7 @@ mod routes {
         match officier_model::create_officer(&client, &officer_info).await {
             Ok(_) => HttpResponse::Created().body("Officer created"),
             Err(err) => match err {
-                OfficerModelError::ValidationError => {
+                ModelError::ValidationError => {
                     HttpResponse::BadRequest().body("Invalid officer info".to_owned())
                 }
                 _ => HttpResponse::InternalServerError().body("Internal server error".to_owned()),

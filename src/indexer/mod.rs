@@ -10,7 +10,7 @@ use ethers::{
 use std::sync::Arc;
 use tokio::time;
 
-use crate::models::officier_model::finalized_officer_creattion;
+use crate::models::onchain_officer_model::{create_onchain_officer, CreateOnchainOfficerInfo};
 
 pub async fn index_event(chain_rpc_url: String, legal_document_address: String, db_pool: Pool) {
     let provider = Provider::<Http>::try_from(chain_rpc_url).unwrap();
@@ -29,9 +29,13 @@ pub async fn index_event(chain_rpc_url: String, legal_document_address: String, 
             .unwrap();
         let latest_block = client.get_block_number().await.unwrap();
 
+        if latest_block.as_u64() < latest_sync_block + 1 {
+            continue;
+        };
+
         let events = contract
             .events()
-            .from_block(latest_sync_block)
+            .from_block(latest_sync_block + 1)
             .to_block(latest_block)
             .query_with_meta()
             .await
@@ -43,7 +47,7 @@ pub async fn index_event(chain_rpc_url: String, legal_document_address: String, 
         for e in events {
             match e {
                 (LegalDocumentManagerEvents::OfficerCreatedFilter(event), meta) => {
-                    &handle_officer_created(&db_pool, event, meta).await;
+                    let _ = &handle_officer_created(&db_pool, event, meta).await;
                 }
                 _ => {}
             }
@@ -51,7 +55,7 @@ pub async fn index_event(chain_rpc_url: String, legal_document_address: String, 
 
         println!("-----------------------------------------------------------------------");
 
-        tokio::fs::write("latest_block", (latest_block + 1).to_string().as_bytes())
+        tokio::fs::write("latest_block", (latest_block).to_string().as_bytes())
             .await
             .unwrap();
 
@@ -61,18 +65,24 @@ pub async fn index_event(chain_rpc_url: String, legal_document_address: String, 
 
 async fn handle_officer_created(
     db_pool: &Pool,
-    _event: legal_document_manager::OfficerCreatedFilter,
-    meta: LogMeta,
+    event: legal_document_manager::OfficerCreatedFilter,
+    _meta: LogMeta,
 ) {
+    println!("get OfficerCreated event");
     if let Ok(client) = db_pool.get().await {
-        let tx_hash = meta
-            .transaction_hash
+        let onchain_address = event
+            .officer_address
             .as_fixed_bytes()
             .iter()
             .fold("0x".to_owned(), |acc, byte| acc + &format!("{:02x}", byte));
 
-        log::info!("transaction_hash: {tx_hash}");
+        let officer_info = CreateOnchainOfficerInfo {
+            onchain_address,
+            name: event.info.name,
+            date_of_birth: event.info.date_of_birth,
+            sex: event.info.sex,
+        };
 
-        let _ = finalized_officer_creattion(&client, &tx_hash).await;
+        let _ = create_onchain_officer(&client, &officer_info).await;
     }
 }
