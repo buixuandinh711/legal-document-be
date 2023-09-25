@@ -22,9 +22,10 @@ impl<'a> FromSql<'a> for OfficerStatus {
             0 => Ok(OfficerStatus::NotCreated),
             1 => Ok(OfficerStatus::Active),
             2 => Ok(OfficerStatus::Deactivated),
-            _ => Err(Box::new(ModelError::new(
+            val => Err(Box::new(ModelError::new(
                 ModelError::InternalError,
-                "Failed to convert from sql to OfficerStatus",
+                "FromSql: invalid value",
+                &val,
             ))),
         }
     }
@@ -42,8 +43,8 @@ impl ToSql for OfficerStatus {
     where
         Self: Sized,
     {
-        match *ty {
-            Type::INT2 => {
+        match ty {
+            &Type::INT2 => {
                 let value: i16 = match self {
                     OfficerStatus::NotCreated => 0,
                     OfficerStatus::Active => 1,
@@ -51,9 +52,10 @@ impl ToSql for OfficerStatus {
                 };
                 value.to_sql(ty, out)
             }
-            _ => Err(Box::new(ModelError::new(
+            t => Err(Box::new(ModelError::new(
                 ModelError::InternalError,
-                "Failed to convert OfficerStatus to SQL type",
+                "ToSql: invalid type",
+                t,
             ))),
         }
     }
@@ -94,10 +96,8 @@ pub async fn create_onchain_officer(
     let statement = client.prepare(&statement).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
-            &format!(
-                "DbPool: Failed to prepare create_onchain_officer\nContent: {}",
-                err.to_string()
-            ),
+            "DbPool: prepare create_onchain_officer",
+            &err,
         )
     })?;
 
@@ -116,10 +116,8 @@ pub async fn create_onchain_officer(
         .map_err(|err| {
             ModelError::new(
                 ModelError::InternalError,
-                &format!(
-                    "DbPool: Failed to execute create_onchain_officer\nContent: {}",
-                    err.to_string()
-                ),
+                "DbPool: Failed to execute create_onchain_officer",
+                &err,
             )
         })?;
 
