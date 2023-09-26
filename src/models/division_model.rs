@@ -1,23 +1,10 @@
 use bytes::BytesMut;
 use deadpool_postgres::Client;
-use derive_more::{Display, Error as DeriveError};
 use std::error::Error;
 use tokio_pg_mapper_derive::PostgresMapper;
 use tokio_postgres::types::{to_sql_checked, FromSql, IsNull, ToSql, Type};
 
-#[derive(Debug, Display, DeriveError)]
-pub enum DivisionModelError {
-    #[display(fmt = "Failed to convert from SQL type")]
-    FromSqlError,
-    #[display(fmt = "Failed to convert to SQL type")]
-    ToSqlError,
-    #[display(fmt = "Official not found")]
-    OfficialNotFound,
-    #[display(fmt = "Database pool error: {}", msg)]
-    DBPoolError { msg: &'static str },
-    #[display(fmt = "Other error: {}", msg)]
-    OtherError { msg: &'static str },
-}
+use super::ModelError;
 
 #[derive(Debug)]
 pub enum DivisionStatus {
@@ -31,11 +18,22 @@ impl<'a> FromSql<'a> for DivisionStatus {
         ty: &tokio_postgres::types::Type,
         raw: &'a [u8],
     ) -> Result<Self, Box<dyn std::error::Error + Sync + Send>> {
-        match i16::from_sql(ty, raw)? {
+        let val = i16::from_sql(ty, raw).map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "FromSql: convert to DivisionStatus",
+                &err,
+            )
+        })?;
+        match val {
             0 => Ok(DivisionStatus::NotCreated),
             1 => Ok(DivisionStatus::Active),
             2 => Ok(DivisionStatus::Deactivated),
-            _ => Err(Box::new(DivisionModelError::FromSqlError)),
+            val => Err(Box::new(ModelError::new(
+                ModelError::InternalError,
+                "FromSql: from SQL to DivisionStatus",
+                &val,
+            ))),
         }
     }
 
@@ -52,8 +50,8 @@ impl ToSql for DivisionStatus {
     where
         Self: Sized,
     {
-        match *ty {
-            Type::INT2 => {
+        match ty {
+            &Type::INT2 => {
                 let value: i16 = match self {
                     DivisionStatus::NotCreated => 0,
                     DivisionStatus::Active => 1,
@@ -61,7 +59,11 @@ impl ToSql for DivisionStatus {
                 };
                 value.to_sql(ty, out)
             }
-            _ => Err(Box::new(DivisionModelError::ToSqlError)),
+            ty => Err(Box::new(ModelError::new(
+                ModelError::InternalError,
+                "ToSql: DivisionStatus to SQL",
+                ty,
+            ))),
         }
     }
 
@@ -88,21 +90,23 @@ pub struct Division {
 pub struct CreateDivisionInfo {
     pub onchain_id: String,
     pub name: String,
-    pub supervisory_id: i64,
+    pub onchain_supervisory_id: String,
 }
 
 pub async fn create_division(
     client: &Client,
     division_info: &CreateDivisionInfo,
-) -> Result<(), DivisionModelError> {
-    let statement = include_str!("../sql/create_division.sql");
-    let statement =
-        client
-            .prepare(&statement)
-            .await
-            .map_err(|_| DivisionModelError::DBPoolError {
-                msg: "Failed to prepare statement",
-            })?;
+) -> Result<(), ModelError> {
+    let supervisory_id = get_db_supervisory_id(&client, &division_info.onchain_id).await?;
+
+    let statement = include_str!("../sql/division/create_division.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare create_division",
+            &err,
+        )
+    })?;
 
     let _ = client
         .execute(
@@ -110,12 +114,44 @@ pub async fn create_division(
             &[
                 &division_info.onchain_id,
                 &division_info.name,
-                &division_info.supervisory_id,
+                &supervisory_id,
                 &DivisionStatus::Active,
             ],
         )
         .await
-        .unwrap();
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute create_division",
+                &err,
+            )
+        })?;
 
     Ok(())
+}
+
+async fn get_db_supervisory_id(client: &Client, onchain_id: &str) -> Result<i64, ModelError> {
+    let statement = include_str!("../sql/division/query_supervisory_id.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_supervisory_id",
+            &err,
+        )
+    })?;
+
+    let query_result = client
+        .query_one(&statement, &[&onchain_id])
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: query query_supervisory_id",
+                &err,
+            )
+        })?;
+
+    let id: i64 = query_result.get(0);
+
+    Ok(id)
 }

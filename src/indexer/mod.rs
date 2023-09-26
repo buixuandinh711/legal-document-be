@@ -10,7 +10,10 @@ use ethers::{
 use std::sync::Arc;
 use tokio::time;
 
-use crate::models::onchain_officer_model::{create_onchain_officer, CreateOnchainOfficerInfo};
+use crate::models::{
+    division_model::{create_division, CreateDivisionInfo},
+    onchain_officer_model::{create_onchain_officer, CreateOnchainOfficerInfo},
+};
 
 pub async fn index_event(chain_rpc_url: String, legal_document_address: String, db_pool: Pool) {
     let provider = Provider::<Http>::try_from(chain_rpc_url).unwrap();
@@ -27,11 +30,15 @@ pub async fn index_event(chain_rpc_url: String, legal_document_address: String, 
             .unwrap()
             .parse()
             .unwrap();
-        let latest_block = client.get_block_number().await.unwrap();
+        let mut latest_block = client.get_block_number().await.unwrap().as_u64();
 
-        if latest_block.as_u64() < latest_sync_block + 1 {
+        if latest_block < latest_sync_block + 1 {
             continue;
         };
+
+        if latest_block - latest_sync_block > 1000 {
+            latest_block = latest_sync_block + 1000;
+        }
 
         let events = contract
             .events()
@@ -41,19 +48,24 @@ pub async fn index_event(chain_rpc_url: String, legal_document_address: String, 
             .await
             .unwrap();
 
-        println!("Read from {} to {}", latest_sync_block, latest_block);
-        println!("Events number {}", events.len());
+        log::info!(
+            "Read from {} to {}, event found: {}",
+            latest_sync_block,
+            latest_block,
+            events.len()
+        );
 
         for e in events {
             match e {
                 (LegalDocumentManagerEvents::OfficerCreatedFilter(event), meta) => {
-                    let _ = &handle_officer_created(&db_pool, event, meta).await;
+                    handle_officer_created(&db_pool, event, meta).await;
+                }
+                (LegalDocumentManagerEvents::DivisionCreatedFilter(event), meta) => {
+                    handle_division_created(&db_pool, event, meta).await;
                 }
                 _ => {}
             }
         }
-
-        println!("-----------------------------------------------------------------------");
 
         tokio::fs::write("latest_block", (latest_block).to_string().as_bytes())
             .await
@@ -68,7 +80,6 @@ async fn handle_officer_created(
     event: legal_document_manager::OfficerCreatedFilter,
     _meta: LogMeta,
 ) {
-    println!("get OfficerCreated event");
     if let Ok(client) = db_pool.get().await {
         let onchain_address = event
             .officer_address
@@ -84,5 +95,20 @@ async fn handle_officer_created(
         };
 
         let _ = create_onchain_officer(&client, &officer_info).await;
+    }
+}
+
+async fn handle_division_created(
+    db_pool: &Pool,
+    event: legal_document_manager::DivisionCreatedFilter,
+    _meta: LogMeta,
+) {
+    if let Ok(client) = db_pool.get().await {
+        let division_info = CreateDivisionInfo {
+            onchain_id: event.division_id,
+            name: event.name,
+            onchain_supervisory_id: event.supervisory_div_id,
+        };
+        let _ = create_division(&client, &division_info).await;
     }
 }
