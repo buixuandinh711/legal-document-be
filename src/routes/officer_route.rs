@@ -106,13 +106,24 @@ mod routes {
             },
         }
     }
+
+    #[post("/logout")]
+    async fn logout(identity: Option<Identity>) -> impl Responder {
+        match identity {
+            Some(identity) => {
+                identity.logout();
+                HttpResponse::Ok().body("Log out successfully")
+            }
+            None => HttpResponse::Unauthorized().body("Unauthorized account"),
+        }
+    }
 }
 
 use actix_web::web;
 use routes::*;
 
-// this function could be located in a different module
 pub fn auth_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(web::scope("/officer").service(create_officer))
-        .service(login);
+        .service(login)
+        .service(logout);
 }
