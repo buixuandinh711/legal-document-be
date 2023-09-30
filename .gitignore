@@ -1,3 +1,5 @@
 /target
 .env
 .vscode
+src/indexer/contracts
+abi
