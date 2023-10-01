@@ -6,7 +6,6 @@ mod routes {
 }
 
 use actix_web::web;
-use routes::*;
 
 // this function could be located in a different module
 pub fn division_routes(cfg: &mut web::ServiceConfig) {

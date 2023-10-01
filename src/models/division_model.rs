@@ -97,7 +97,6 @@ pub async fn create_division(
     client: &Client,
     division_info: &CreateDivisionInfo,
 ) -> Result<(), ModelError> {
-    let supervisory_id = get_db_supervisory_id(&client, &division_info.onchain_id).await?;
 
     let statement = include_str!("../sql/division/create_division.sql");
     let statement = client.prepare(&statement).await.map_err(|err| {
@@ -114,7 +113,7 @@ pub async fn create_division(
             &[
                 &division_info.onchain_id,
                 &division_info.name,
-                &supervisory_id,
+                &division_info.onchain_supervisory_id,
                 &DivisionStatus::Active,
             ],
         )
@@ -128,30 +127,4 @@ pub async fn create_division(
         })?;
 
     Ok(())
-}
-
-async fn get_db_supervisory_id(client: &Client, onchain_id: &str) -> Result<i64, ModelError> {
-    let statement = include_str!("../sql/division/query_supervisory_id.sql");
-    let statement = client.prepare(&statement).await.map_err(|err| {
-        ModelError::new(
-            ModelError::InternalError,
-            "DbPool: prepare query_supervisory_id",
-            &err,
-        )
-    })?;
-
-    let query_result = client
-        .query_one(&statement, &[&onchain_id])
-        .await
-        .map_err(|err| {
-            ModelError::new(
-                ModelError::InternalError,
-                "DbPool: query query_supervisory_id",
-                &err,
-            )
-        })?;
-
-    let id: i64 = query_result.get(0);
-
-    Ok(id)
 }
