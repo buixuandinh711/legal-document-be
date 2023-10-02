@@ -22,12 +22,16 @@ CREATE TABLE "divisions"(
 	CONSTRAINT "fk_supervisory" FOREIGN KEY("supervisory_id") REFERENCES "divisions"("id")
 );
 CREATE TABLE "positions"(
-	"officer_id" BIGINT NOT NULL,
+	"onchain_officer_id" BIGINT NOT NULL,
 	"division_id" BIGINT NOT NULL,
 	"position_index" SMALLINT NOT NULL,
 	"name" VARCHAR(255) NOT NULL,
 	"role" SMALLINT NOT NULL,
-	PRIMARY KEY("officer_id", "division_id", "position_index"),
-	CONSTRAINT "fk_position_officer" FOREIGN KEY("officer_id") REFERENCES "officers"("id"),
+	PRIMARY KEY(
+		"onchain_officer_id",
+		"division_id",
+		"position_index"
+	),
+	CONSTRAINT "fk_position_onchain_officer" FOREIGN KEY("onchain_officer_id") REFERENCES "onchain_officers"("id"),
 	CONSTRAINT "fk_position_division" FOREIGN KEY("division_id") REFERENCES "divisions"("id")
 );

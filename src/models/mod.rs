@@ -1,6 +1,8 @@
 pub mod division_model;
 pub mod officier_model;
 pub mod onchain_officer_model;
+pub mod position_model;
+
 use derive_more::{Display, Error as DeriveError};
 use std::fmt::Display;
 
