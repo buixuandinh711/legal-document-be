@@ -3,8 +3,9 @@ mod indexer;
 mod models;
 mod routes;
 
-use crate::routes::{
-    division_route::division_routes, home::home_routes, officer_route::auth_routes,
+use crate::{
+    app_config::{AppState, CloudStorage},
+    routes::{division_route::division_routes, home::home_routes, officer_route::auth_routes},
 };
 use actix_identity::IdentityMiddleware;
 use actix_session::{config::PersistentSession, storage::CookieSessionStore, SessionMiddleware};
@@ -12,6 +13,7 @@ use actix_web::{
     cookie::{time::Duration, Key},
     middleware, web, App, HttpServer,
 };
+use cloud_storage::Client;
 use dotenv::dotenv;
 use tokio_postgres::NoTls;
 
@@ -31,15 +33,26 @@ async fn main() -> std::io::Result<()> {
     } // panic if unable to connect
     log::info!("Database connected!");
 
+    // tokio::spawn(indexer::index_event(
+    //     app_config.chain_rpc_url.clone(),
+    //     app_config.legal_document_address.clone(),
+    //     db_pool.clone(),
+    // ));
+
+    let bucket_name = dotenv::var("CLOUD_STORAGE_BUCKET").unwrap();
+    let cloud_storage_base_url = dotenv::var("CLOUD_STORAGE_BASE_URL").unwrap();
+
     log::info!("Server started at: {}", &app_config.server_addr);
-
-    tokio::spawn(indexer::index_event(
-        app_config.chain_rpc_url.clone(),
-        app_config.legal_document_address.clone(),
-        db_pool.clone(),
-    ));
-
     HttpServer::new(move || {
+        let app_state = AppState {
+            db_pool: db_pool.clone(),
+            cloud_storage: CloudStorage {
+                client: Client::default(),
+                bucket_name: bucket_name.clone(),
+                base_url: cloud_storage_base_url.clone(),
+            },
+        };
+
         App::new()
             .wrap(IdentityMiddleware::default())
             .wrap(
@@ -51,7 +64,7 @@ async fn main() -> std::io::Result<()> {
             )
             .wrap(middleware::NormalizePath::trim())
             .wrap(middleware::Logger::default())
-            .app_data(web::Data::new(db_pool.clone()))
+            .app_data(web::Data::new(app_state))
             .configure(auth_routes)
             .configure(home_routes)
             .configure(division_routes)
