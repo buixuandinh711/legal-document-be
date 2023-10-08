@@ -35,3 +35,19 @@ CREATE TABLE "positions"(
 	CONSTRAINT "fk_position_onchain_officer" FOREIGN KEY("onchain_officer_id") REFERENCES "onchain_officers"("id"),
 	CONSTRAINT "fk_position_division" FOREIGN KEY("division_id") REFERENCES "divisions"("id")
 );
+CREATE TABLE "documents" (
+	"id" BIGSERIAL PRIMARY KEY,
+	"hash" VARCHAR(255) NOT NULL UNIQUE,
+	"resource_uri" VARCHAR(255) NOT NULL
+);
+CREATE TABLE "onchain_documents" (
+	"id" BIGSERIAL PRIMARY KEY,
+	"hash" VARCHAR(255) NOT NULL UNIQUE,
+	"division_id" BIGINT NOT NULL,
+	"onchain_officer_id" BIGINT NOT NULL,
+	"position_index" SMALLINT NOT NULL,
+	"signer_onchain_id" BIGINT [] NOT NULL,
+	CONSTRAINT "fk_ocsd_sd" FOREIGN KEY("hash") REFERENCES "documents"("hash"),
+	CONSTRAINT "fk_ocsd_division" FOREIGN KEY("division_id") REFERENCES "divisions"("id"),
+	CONSTRAINT "fk_ocsd_of" FOREIGN KEY("onchain_officer_id") REFERENCES "onchain_officers"("id")
+);

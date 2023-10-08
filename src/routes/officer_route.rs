@@ -4,9 +4,12 @@ mod routes {
     use deadpool_postgres::Pool;
     use serde::Deserialize;
 
-    use crate::models::{
-        officier_model::{self, AuthOfficerInfo, CreateOfficerInfo},
-        ModelError,
+    use crate::{
+        app_config::AppState,
+        models::{
+            officier_model::{self, AuthOfficerInfo, CreateOfficerInfo},
+            ModelError,
+        },
     };
 
     #[derive(Deserialize, Debug)]
@@ -45,10 +48,10 @@ mod routes {
 
     #[post("/create")]
     async fn create_officer(
-        db_pool: web::Data<Pool>,
+        app_state: web::Data<AppState>,
         req_body: web::Json<CreateOfficerBody>,
     ) -> impl Responder {
-        let client = db_pool.get().await.unwrap();
+        let client = app_state.db_pool.get().await.unwrap();
         let officer_info = req_body.into_inner();
         let officer_info = CreateOfficerInfo::from(officer_info);
 

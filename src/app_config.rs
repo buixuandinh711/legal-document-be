@@ -1,3 +1,5 @@
+use cloud_storage::Client;
+use deadpool_postgres::Pool;
 use serde::Deserialize;
 #[derive(Debug, Default, Deserialize)]
 pub struct AppConfig {
@@ -14,4 +16,15 @@ impl AppConfig {
             .build()?
             .try_deserialize()
     }
+}
+
+pub struct CloudStorage {
+    pub client: Client,
+    pub bucket_name: String,
+    pub base_url: String,
+}
+
+pub struct AppState {
+    pub db_pool: Pool,
+    pub cloud_storage: CloudStorage,
 }
