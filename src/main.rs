@@ -1,11 +1,10 @@
 mod app_config;
-mod indexer;
 mod models;
 mod routes;
 
 use crate::{
     app_config::{AppState, CloudStorage},
-    routes::{division_route::division_routes, home::home_routes, officer_route::auth_routes},
+    routes::{home::home_routes, officer_route::auth_routes},
 };
 use actix_identity::IdentityMiddleware;
 use actix_session::{config::PersistentSession, storage::CookieSessionStore, SessionMiddleware};
@@ -32,12 +31,6 @@ async fn main() -> std::io::Result<()> {
         let _ = db_pool.get().await.unwrap();
     } // panic if unable to connect
     log::info!("Database connected!");
-
-    // tokio::spawn(indexer::index_event(
-    //     app_config.chain_rpc_url.clone(),
-    //     app_config.legal_document_address.clone(),
-    //     db_pool.clone(),
-    // ));
 
     let bucket_name = dotenv::var("CLOUD_STORAGE_BUCKET").unwrap();
     let cloud_storage_base_url = dotenv::var("CLOUD_STORAGE_BASE_URL").unwrap();
@@ -67,7 +60,6 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(app_state))
             .configure(auth_routes)
             .configure(home_routes)
-            .configure(division_routes)
     })
     .bind(&app_config.server_addr)?
     .run()

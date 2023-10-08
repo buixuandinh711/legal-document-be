@@ -1,5 +1,3 @@
-use crate::models::onchain_officer_model::OfficerStatus;
-
 use super::ModelError;
 use aes_gcm::{
     aead::{Aead, KeyInit},
@@ -9,6 +7,39 @@ use aes_gcm::{
 };
 use deadpool_postgres::Client;
 use tokio_pg_mapper_derive::PostgresMapper;
+use tokio_postgres::types::{Type, FromSql};
+
+#[derive(PartialEq, Debug)]
+pub enum OfficerStatus {
+    NotCreated,
+    Active,
+    Deactivated,
+}
+
+impl<'a> FromSql<'a> for OfficerStatus {
+    fn from_sql(
+        ty: &tokio_postgres::types::Type,
+        raw: &'a [u8],
+    ) -> Result<Self, Box<dyn std::error::Error + Sync + Send>> {
+        match i16::from_sql(ty, raw)? {
+            0 => Ok(OfficerStatus::NotCreated),
+            1 => Ok(OfficerStatus::Active),
+            2 => Ok(OfficerStatus::Deactivated),
+            val => Err(Box::new(ModelError::new(
+                ModelError::InternalError,
+                "FromSql: invalid value",
+                &val,
+            ))),
+        }
+    }
+
+    fn accepts(ty: &tokio_postgres::types::Type) -> bool {
+        if *ty == Type::INT2 {
+            return true;
+        }
+        false
+    }
+}
 
 #[derive(PostgresMapper, Debug)]
 #[pg_mapper(table = "officers")]
@@ -44,7 +75,7 @@ pub async fn create_officer(
         ));
     }
 
-    let statement = include_str!("../sql/officer/create_officer.sql");
+    let statement = include_str!("../sql/officers/create_officer.sql");
     let statement = client.prepare(&statement).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
@@ -84,7 +115,7 @@ pub async fn authenticate_officer(
     client: &Client,
     auth_info: &AuthOfficerInfo,
 ) -> Result<Option<String>, ModelError> {
-    let query_password_stmt = include_str!("../sql/officer/query_password.sql");
+    let query_password_stmt = include_str!("../sql/officers/query_password.sql");
     let query_password_stmt = client.prepare(query_password_stmt).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
@@ -163,7 +194,7 @@ fn encrypt_private_key(private_key: &str, password: &str) -> Result<String, Mode
 }
 
 async fn validate_onchain_status(client: &Client, onchain_address: &str) -> Result<(), ModelError> {
-    let query_finalize_stmt = include_str!("../sql/onchain_officer/query_finalization.sql");
+    let query_finalize_stmt = include_str!("../sql/officers/query_finalization.sql");
     let query_finalize_stmt = client.prepare(query_finalize_stmt).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
