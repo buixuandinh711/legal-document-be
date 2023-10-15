@@ -7,7 +7,7 @@ use aes_gcm::{
 };
 use deadpool_postgres::Client;
 use tokio_pg_mapper_derive::PostgresMapper;
-use tokio_postgres::types::{Type, FromSql};
+use tokio_postgres::types::{FromSql, Type};
 
 #[derive(PartialEq, Debug)]
 pub enum OfficerStatus {
@@ -87,7 +87,9 @@ pub async fn create_officer(
     let hashed_password = bcrypt::hash(&officer_info.password, bcrypt::DEFAULT_COST)
         .map_err(|err| ModelError::new(ModelError::InternalError, "Bcrypt: hash password", &err))?;
 
-    let encrypted_pk = encrypt_private_key(&officer_info.private_key, &officer_info.password)?;
+    let lowercase_address = officer_info.onchain_address.to_lowercase();
+    let lowercase_pk = officer_info.private_key.to_lowercase();
+    let encrypted_pk = encrypt_private_key(&lowercase_pk, &officer_info.password)?;
 
     let _ = client
         .execute(
@@ -95,7 +97,7 @@ pub async fn create_officer(
             &[
                 &officer_info.username,
                 &hashed_password,
-                &officer_info.onchain_address,
+                &lowercase_address,
                 &encrypted_pk,
             ],
         )
@@ -169,7 +171,7 @@ fn validate_creattion_info(info: &CreateOfficerInfo) -> bool {
 }
 
 fn encrypt_private_key(private_key: &str, password: &str) -> Result<String, ModelError> {
-    let hashed_password = ethers::utils::keccak256(password.as_bytes());
+    let hashed_password = ethers_core::utils::keccak256(password.as_bytes());
     let key = Key::<Aes256Gcm>::from_slice(&hashed_password);
     let cipher = Aes256Gcm::new(&key);
 
@@ -217,7 +219,7 @@ async fn validate_onchain_status(client: &Client, onchain_address: &str) -> Resu
     if query_finalize_result.is_empty() {
         return Err(ModelError::new(
             ModelError::AuthError,
-            "Auth: get onchain officer",
+            "Auth: officer not finalized",
             &onchain_address,
         ));
     }

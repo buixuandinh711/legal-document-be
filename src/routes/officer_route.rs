@@ -1,7 +1,6 @@
 mod routes {
     use actix_identity::Identity;
     use actix_web::{post, web, HttpMessage, HttpRequest, HttpResponse, Responder};
-    use deadpool_postgres::Pool;
     use serde::Deserialize;
 
     use crate::{
@@ -70,7 +69,7 @@ mod routes {
     async fn login(
         req: HttpRequest,
         identity: Option<Identity>,
-        db_pool: web::Data<Pool>,
+        app_state: web::Data<AppState>,
         req_body: web::Json<ReqLoginBody>,
     ) -> impl Responder {
         if let Some(identity) = identity {
@@ -85,7 +84,7 @@ mod routes {
             }
         }
 
-        let client = db_pool.get().await.unwrap();
+        let client = app_state.db_pool.get().await.unwrap();
 
         let req_body = req_body.into_inner();
 

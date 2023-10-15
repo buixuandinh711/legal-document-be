@@ -14,7 +14,7 @@ async fn create_tables(client: &Client) -> Result<(), PoolError> {
     Ok(())
 }
 
-#[tokio::main]
+#[actix_web::main]
 async fn main() {
     dotenv().ok();
 

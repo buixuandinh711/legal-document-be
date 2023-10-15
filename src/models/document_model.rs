@@ -32,7 +32,7 @@ async fn preprocess_file(file: &mut File) -> Result<(String, Vec<u8>), ModelErro
     file.read_to_end(&mut buffer).map_err(|err| {
         ModelError::new(ModelError::InternalError, "File: read file to buffer", &err)
     })?;
-    let doc_hash = ethers::utils::keccak256(&buffer);
+    let doc_hash = ethers_core::utils::keccak256(&buffer);
     let doc_hash = doc_hash
         .iter()
         .fold("".to_owned(), |acc, byte| acc + &format!("{:02x}", byte));

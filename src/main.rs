@@ -61,6 +61,7 @@ async fn main() -> std::io::Result<()> {
             .configure(auth_routes)
             .configure(home_routes)
     })
+    .workers(2)
     .bind(&app_config.server_addr)?
     .run()
     .await

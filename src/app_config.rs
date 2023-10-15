@@ -4,8 +4,6 @@ use serde::Deserialize;
 #[derive(Debug, Default, Deserialize)]
 pub struct AppConfig {
     pub server_addr: String,
-    pub chain_rpc_url: String,
-    pub legal_document_address: String,
     pub pg: deadpool_postgres::Config,
 }
 
