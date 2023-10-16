@@ -68,22 +68,9 @@ mod routes {
     #[post("/login")]
     async fn login(
         req: HttpRequest,
-        identity: Option<Identity>,
         app_state: web::Data<AppState>,
         req_body: web::Json<ReqLoginBody>,
     ) -> impl Responder {
-        if let Some(identity) = identity {
-            match identity.id() {
-                Ok(officer_id) => {
-                    return HttpResponse::Ok()
-                        .body(format!("Already logged in, hello {}", officer_id));
-                }
-                Err(_) => {
-                    return HttpResponse::InternalServerError().body("Internal server error");
-                }
-            }
-        }
-
         let client = app_state.db_pool.get().await.unwrap();
 
         let req_body = req_body.into_inner();
@@ -92,9 +79,9 @@ mod routes {
 
         match officier_model::authenticate_officer(&client, &auth_info).await {
             Ok(auth_result) => {
-                if let Some(officer_id) = auth_result {
-                    match Identity::login(&req.extensions(), officer_id) {
-                        Ok(_) => HttpResponse::Ok().body("Login successfully"),
+                if let Some((officer_id, officer_info)) = auth_result {
+                    match Identity::login(&req.extensions(), officer_id.to_string()) {
+                        Ok(_) => HttpResponse::Ok().json(officer_info),
                         Err(_) => HttpResponse::InternalServerError().body("Internal server error"),
                     }
                 } else {
@@ -106,6 +93,35 @@ mod routes {
                 ModelError::NotFoundError => HttpResponse::NotFound().body(""),
                 _ => HttpResponse::InternalServerError().body("Internal server error"),
             },
+        }
+    }
+
+    #[post("/login-cookie")]
+    async fn login_cookie(
+        identity: Option<Identity>,
+        app_state: web::Data<AppState>,
+    ) -> impl Responder {
+        match identity {
+            Some(identity) => match identity.id() {
+                Ok(officer_id) => {
+                    let client = app_state.db_pool.get().await.unwrap();
+                    let officer_id: i64 = officer_id.parse().unwrap();
+                    let officer_info =
+                        officier_model::validate_and_get_info(&client, officer_id).await;
+                    match officer_info {
+                        Ok(officer_info) => HttpResponse::Ok().json(officer_info),
+                        Err(err) => match err {
+                            ModelError::AuthError => HttpResponse::Unauthorized().body(""),
+                            ModelError::NotFoundError => HttpResponse::NotFound().body(""),
+                            _ => HttpResponse::InternalServerError().body("Internal server error"),
+                        },
+                    }
+                }
+                Err(_) => {
+                    return HttpResponse::InternalServerError().body("Internal server error");
+                }
+            },
+            None => return HttpResponse::Unauthorized().body("Invalid auth cookie"),
         }
     }
 
@@ -127,5 +143,6 @@ use routes::*;
 pub fn auth_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(web::scope("/officer").service(create_officer))
         .service(login)
+        .service(login_cookie)
         .service(logout);
 }

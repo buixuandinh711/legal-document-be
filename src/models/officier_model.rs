@@ -6,6 +6,7 @@ use aes_gcm::{
     Nonce,
 };
 use deadpool_postgres::Client;
+use serde::Serialize;
 use tokio_pg_mapper_derive::PostgresMapper;
 use tokio_postgres::types::{FromSql, Type};
 
@@ -63,6 +64,21 @@ pub struct AuthOfficerInfo {
     pub password: String,
 }
 
+#[derive(Serialize)]
+pub struct OnchainPosition {
+    position_index: i16,
+    position_name: String,
+    position_role: i16,
+    division_id: i64,
+    division_name: String,
+}
+
+#[derive(Serialize)]
+pub struct OnchainOfficer {
+    officer_name: String,
+    positions: Vec<OnchainPosition>,
+}
+
 pub async fn create_officer(
     client: &Client,
     officer_info: &CreateOfficerInfo,
@@ -116,7 +132,7 @@ pub async fn create_officer(
 pub async fn authenticate_officer(
     client: &Client,
     auth_info: &AuthOfficerInfo,
-) -> Result<Option<String>, ModelError> {
+) -> Result<Option<(i64, OnchainOfficer)>, ModelError> {
     let query_password_stmt = include_str!("../sql/officers/query_password.sql");
     let query_password_stmt = client.prepare(query_password_stmt).await.map_err(|err| {
         ModelError::new(
@@ -125,7 +141,7 @@ pub async fn authenticate_officer(
             &err,
         )
     })?;
-    let mut query_password_result = client
+    let query_password_result = client
         .query(&query_password_stmt, &[&auth_info.username])
         .await
         .map_err(|err| {
@@ -143,10 +159,7 @@ pub async fn authenticate_officer(
             &auth_info.username,
         ));
     }
-    let query_password_result = query_password_result.remove(0);
-
-    let onchain_address: String = query_password_result.get(2);
-    validate_onchain_status(client, &onchain_address).await?;
+    let query_password_result = query_password_result.first().unwrap();
 
     let hashed_password: String = query_password_result.get(1);
     let is_authenticated =
@@ -156,10 +169,71 @@ pub async fn authenticate_officer(
 
     if is_authenticated {
         let officer_id: i64 = query_password_result.get(0);
-        return Ok(Some(officer_id.to_string()));
+        let officer_info = validate_and_get_info(client, officer_id).await?;
+        return Ok(Some((officer_id, officer_info)));
     } else {
         return Ok(None);
     }
+}
+
+pub async fn validate_and_get_info(
+    client: &Client,
+    officer_id: i64,
+) -> Result<OnchainOfficer, ModelError> {
+    let query_officer_stmt = include_str!("../sql/officers/query_onchain_info_id.sql");
+    let query_finalize_stmt = client.prepare(query_officer_stmt).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_onchain_info_id",
+            &err,
+        )
+    })?;
+
+    let query_officer_result = client
+        .query(&query_finalize_stmt, &[&officer_id])
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute query_onchain_info_id",
+                &err,
+            )
+        })?;
+
+    if query_officer_result.is_empty() {
+        return Err(ModelError::new(
+            ModelError::AuthError,
+            "Auth: query officer info",
+            &officer_id,
+        ));
+    }
+
+    let positions: Vec<OnchainPosition> = query_officer_result
+        .iter()
+        .map(|row| OnchainPosition {
+            position_index: row.get(2),
+            position_name: row.get(3),
+            position_role: row.get(4),
+            division_id: row.get(5),
+            division_name: row.get(6),
+        })
+        .collect();
+
+    let officer_status: OfficerStatus = query_officer_result[0].get(1);
+    if officer_status != OfficerStatus::Active {
+        return Err(ModelError::new(
+            ModelError::AuthError,
+            "Auth: officer not active",
+            &(officer_status as u8),
+        ));
+    }
+
+    let onchain_officer = OnchainOfficer {
+        officer_name: query_officer_result[0].get(0),
+        positions,
+    };
+
+    Ok(onchain_officer)
 }
 
 fn validate_creattion_info(info: &CreateOfficerInfo) -> bool {
@@ -193,45 +267,4 @@ fn encrypt_private_key(private_key: &str, password: &str) -> Result<String, Mode
         .fold("0x".to_owned(), |acc, byte| acc + &format!("{:02x}", byte));
 
     Ok(hex_string)
-}
-
-async fn validate_onchain_status(client: &Client, onchain_address: &str) -> Result<(), ModelError> {
-    let query_finalize_stmt = include_str!("../sql/officers/query_finalization.sql");
-    let query_finalize_stmt = client.prepare(query_finalize_stmt).await.map_err(|err| {
-        ModelError::new(
-            ModelError::InternalError,
-            "DbPool: prepare query_finalization",
-            &err,
-        )
-    })?;
-
-    let query_finalize_result = client
-        .query(&query_finalize_stmt, &[&onchain_address])
-        .await
-        .map_err(|err| {
-            ModelError::new(
-                ModelError::InternalError,
-                "DbPool: execute query_finalization",
-                &err,
-            )
-        })?;
-
-    if query_finalize_result.is_empty() {
-        return Err(ModelError::new(
-            ModelError::AuthError,
-            "Auth: officer not finalized",
-            &onchain_address,
-        ));
-    }
-
-    let status: OfficerStatus = query_finalize_result[0].get(0);
-    if status != OfficerStatus::Active {
-        return Err(ModelError::new(
-            ModelError::AuthError,
-            "Auth: invalid officer onchain status",
-            &(status as u8),
-        ));
-    }
-
-    Ok(())
 }
