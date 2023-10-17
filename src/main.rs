@@ -6,6 +6,7 @@ use crate::{
     app_config::{AppState, CloudStorage},
     routes::{home::home_routes, officer_route::auth_routes},
 };
+use actix_cors::Cors;
 use actix_identity::IdentityMiddleware;
 use actix_session::{config::PersistentSession, storage::CookieSessionStore, SessionMiddleware};
 use actix_web::{
@@ -15,8 +16,6 @@ use actix_web::{
 use cloud_storage::Client;
 use dotenv::dotenv;
 use tokio_postgres::NoTls;
-
-const ONE_MINUTE: Duration = Duration::minutes(1);
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -37,6 +36,8 @@ async fn main() -> std::io::Result<()> {
 
     log::info!("Server started at: {}", &app_config.server_addr);
     HttpServer::new(move || {
+        let cors = Cors::permissive();
+
         let app_state = AppState {
             db_pool: db_pool.clone(),
             cloud_storage: CloudStorage {
@@ -47,12 +48,13 @@ async fn main() -> std::io::Result<()> {
         };
 
         App::new()
+            .wrap(cors)
             .wrap(IdentityMiddleware::default())
             .wrap(
                 SessionMiddleware::builder(CookieSessionStore::default(), secret_key.clone())
                     .cookie_name("auth".to_owned())
                     .cookie_secure(false)
-                    .session_lifecycle(PersistentSession::default().session_ttl(ONE_MINUTE))
+                    .session_lifecycle(PersistentSession::default().session_ttl(Duration::WEEK))
                     .build(),
             )
             .wrap(middleware::NormalizePath::trim())

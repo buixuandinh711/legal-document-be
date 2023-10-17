@@ -17,7 +17,7 @@ CREATE TABLE "onchain_officers"(
 	"date_of_birth" VARCHAR(255) NOT NULL,
 	"sex" VARCHAR(255) NOT NULL,
 	"status" SMALLINT NOT NULL
-);a
+);
 CREATE TABLE "onchain_divisions"(
 	"id" BIGSERIAL PRIMARY KEY,
 	"onchain_id" VARCHAR(255) NOT NULL UNIQUE,

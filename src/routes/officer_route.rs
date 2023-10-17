@@ -1,6 +1,6 @@
 mod routes {
     use actix_identity::Identity;
-    use actix_web::{post, web, HttpMessage, HttpRequest, HttpResponse, Responder};
+    use actix_web::{post, web, HttpMessage, HttpRequest, HttpResponse, Responder, get};
     use serde::Deserialize;
 
     use crate::{
@@ -96,7 +96,7 @@ mod routes {
         }
     }
 
-    #[post("/login-cookie")]
+    #[get("/login-cookie")]
     async fn login_cookie(
         identity: Option<Identity>,
         app_state: web::Data<AppState>,
