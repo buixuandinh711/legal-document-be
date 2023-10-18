@@ -7,6 +7,7 @@ use aes_gcm::{
 };
 use deadpool_postgres::Client;
 use serde::Serialize;
+use serde_repr::Serialize_repr;
 use tokio_pg_mapper_derive::PostgresMapper;
 use tokio_postgres::types::{FromSql, Type};
 
@@ -29,6 +30,48 @@ impl<'a> FromSql<'a> for OfficerStatus {
             val => Err(Box::new(ModelError::new(
                 ModelError::InternalError,
                 "FromSql: invalid value",
+                &val,
+            ))),
+        }
+    }
+
+    fn accepts(ty: &tokio_postgres::types::Type) -> bool {
+        if *ty == Type::INT2 {
+            return true;
+        }
+        false
+    }
+}
+
+#[derive(Debug, Serialize_repr)]
+#[repr(u8)]
+pub enum PositionRole {
+    Revoked,
+    DivisionAdmin,
+    Manager,
+    Staff,
+}
+
+impl<'a> FromSql<'a> for PositionRole {
+    fn from_sql(
+        ty: &tokio_postgres::types::Type,
+        raw: &'a [u8],
+    ) -> Result<Self, Box<dyn std::error::Error + Sync + Send>> {
+        let val = i16::from_sql(ty, raw).map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "FromSql: convert to PositionRole",
+                &err,
+            )
+        })?;
+        match val {
+            0 => Ok(PositionRole::Revoked),
+            1 => Ok(PositionRole::DivisionAdmin),
+            2 => Ok(PositionRole::Manager),
+            3 => Ok(PositionRole::Staff),
+            val => Err(Box::new(ModelError::new(
+                ModelError::InternalError,
+                "FromSql: from SQL to PositionRole",
                 &val,
             ))),
         }
@@ -66,11 +109,11 @@ pub struct AuthOfficerInfo {
 
 #[derive(Serialize)]
 pub struct OnchainPosition {
-    position_index: i16,
-    position_name: String,
-    position_role: i16,
     division_id: i64,
     division_name: String,
+    position_index: i16,
+    position_name: String,
+    position_role: PositionRole,
 }
 
 #[derive(Serialize)]
@@ -234,6 +277,29 @@ pub async fn validate_and_get_info(
     };
 
     Ok(onchain_officer)
+}
+
+pub async fn validate_and_get_role(
+    client: &Client,
+    officer_id: i64,
+    division_id: i64,
+    position_index: i16,
+) -> Result<PositionRole, ModelError> {
+    let officer = validate_and_get_info(client, officer_id).await?;
+
+    let position = officer
+        .positions
+        .into_iter()
+        .find(|pos| pos.division_id == division_id && pos.position_index == position_index);
+
+    match position {
+        Some(position) => Ok(position.position_role),
+        None => Err(ModelError::new(
+            ModelError::NotFoundError,
+            "Officer: not found position",
+            &format!("{} {} {}", officer_id, division_id, position_index),
+        )),
+    }
 }
 
 fn validate_creattion_info(info: &CreateOfficerInfo) -> bool {

@@ -4,7 +4,7 @@ mod routes;
 
 use crate::{
     app_config::{AppState, CloudStorage},
-    routes::{home::home_routes, officer_route::auth_routes},
+    routes::{draft_route::draft_routes, home::home_routes, officer_route::auth_routes},
 };
 use actix_cors::Cors;
 use actix_identity::IdentityMiddleware;
@@ -62,6 +62,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(app_state))
             .configure(auth_routes)
             .configure(home_routes)
+            .configure(draft_routes)
     })
     .workers(2)
     .bind(&app_config.server_addr)?

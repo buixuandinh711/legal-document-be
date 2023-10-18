@@ -1,5 +1,6 @@
 pub mod document_model;
 pub mod officier_model;
+pub mod draft_model;
 
 use derive_more::{Display, Error as DeriveError};
 use std::fmt::Display;
