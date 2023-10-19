@@ -32,6 +32,7 @@ cloud-storage = { version = "0.11.1", default-features = false, features = [
 ] }
 actix-multipart = "0.6"
 actix-multipart-derive = "0.6"
-ethers-core = "2.0.10"
 actix-cors = "0.6.4"
 serde_repr = "0.1.16"
+tiny-keccak = { version = "2.0.0", features = ["keccak"] }
+flate2 = "1.0.28"

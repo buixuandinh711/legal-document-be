@@ -3,7 +3,7 @@ use std::{fs::File, io::Read};
 use deadpool_postgres::Client;
 use tokio_pg_mapper_derive::PostgresMapper;
 
-use crate::app_config::CloudStorage;
+use crate::{app_config::CloudStorage, utils};
 
 use super::ModelError;
 
@@ -32,10 +32,8 @@ async fn preprocess_file(file: &mut File) -> Result<(String, Vec<u8>), ModelErro
     file.read_to_end(&mut buffer).map_err(|err| {
         ModelError::new(ModelError::InternalError, "File: read file to buffer", &err)
     })?;
-    let doc_hash = ethers_core::utils::keccak256(&buffer);
-    let doc_hash = doc_hash
-        .iter()
-        .fold("".to_owned(), |acc, byte| acc + &format!("{:02x}", byte));
+    
+    let doc_hash = get_doc_hash(&buffer)?;
 
     Ok((doc_hash, buffer))
 }
@@ -52,7 +50,7 @@ async fn upload_to_storage(
             &cloud_storage.bucket_name,
             file_buffer.to_vec(),
             file_name,
-            "application/gzip",
+            "application/pdf",
         )
         .await
         .map_err(|err| {
@@ -93,4 +91,16 @@ async fn save_to_db(client: &Client, doc_hash: &str, resource_uri: &str) -> Resu
         })?;
 
     Ok(())
+}
+
+fn get_doc_hash(buf: &[u8]) -> Result<String, ModelError> {
+    let compressed_doc = utils::compress(&buf).map_err(|err| {
+        ModelError::new(ModelError::InternalError, "Document: compress doc", &err)
+    })?;
+    let doc_hash = utils::keccak256(&compressed_doc);
+    let doc_hash = doc_hash
+        .iter()
+        .fold("".to_owned(), |acc, byte| acc + &format!("{:02x}", byte));
+
+    Ok(doc_hash)
 }

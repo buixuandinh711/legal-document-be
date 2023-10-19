@@ -1,3 +1,5 @@
+use crate::utils;
+
 use super::ModelError;
 use aes_gcm::{
     aead::{Aead, KeyInit},
@@ -311,7 +313,7 @@ fn validate_creattion_info(info: &CreateOfficerInfo) -> bool {
 }
 
 fn encrypt_private_key(private_key: &str, password: &str) -> Result<String, ModelError> {
-    let hashed_password = ethers_core::utils::keccak256(password.as_bytes());
+    let hashed_password = utils::keccak256(password.as_bytes());
     let key = Key::<Aes256Gcm>::from_slice(&hashed_password);
     let cipher = Aes256Gcm::new(&key);
 
