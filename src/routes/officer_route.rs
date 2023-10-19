@@ -1,6 +1,6 @@
 mod routes {
     use actix_identity::Identity;
-    use actix_web::{post, web, HttpMessage, HttpRequest, HttpResponse, Responder, get};
+    use actix_web::{get, post, web, HttpMessage, HttpRequest, HttpResponse, Responder};
     use serde::Deserialize;
 
     use crate::{
@@ -101,27 +101,23 @@ mod routes {
         identity: Option<Identity>,
         app_state: web::Data<AppState>,
     ) -> impl Responder {
-        match identity {
-            Some(identity) => match identity.id() {
-                Ok(officer_id) => {
-                    let client = app_state.db_pool.get().await.unwrap();
-                    let officer_id: i64 = officer_id.parse().unwrap();
-                    let officer_info =
-                        officier_model::validate_and_get_info(&client, officer_id).await;
-                    match officer_info {
-                        Ok(officer_info) => HttpResponse::Ok().json(officer_info),
-                        Err(err) => match err {
-                            ModelError::AuthError => HttpResponse::Unauthorized().body(""),
-                            ModelError::NotFoundError => HttpResponse::NotFound().body(""),
-                            _ => HttpResponse::InternalServerError().body("Internal server error"),
-                        },
-                    }
-                }
-                Err(_) => {
-                    return HttpResponse::InternalServerError().body("Internal server error");
-                }
+        if identity.is_none() {
+            return HttpResponse::Unauthorized().finish();
+        }
+        let officer_id = identity.as_ref().unwrap().id();
+        if officer_id.is_err() {
+            return HttpResponse::InternalServerError().body("Unable to get identity info");
+        }
+        let officer_id: i64 = officer_id.unwrap().parse().unwrap();
+
+        let client = app_state.db_pool.get().await.unwrap();
+        match officier_model::validate_and_get_info(&client, officer_id).await {
+            Ok(officer_info) => HttpResponse::Ok().json(officer_info),
+            Err(err) => match err {
+                ModelError::AuthError => HttpResponse::Unauthorized().body(""),
+                ModelError::NotFoundError => HttpResponse::NotFound().body(""),
+                _ => HttpResponse::InternalServerError().body("Internal server error"),
             },
-            None => return HttpResponse::Unauthorized().body("Invalid auth cookie"),
         }
     }
 

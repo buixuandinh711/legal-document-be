@@ -4,9 +4,10 @@ mod routes {
         models::{
             document_model, document_type_model,
             draft_model::{self, CreateDraftInfo},
-            officier_model::{self, PositionRole},
+            officier_model::PositionRole,
             ModelError,
         },
+        routes::{verify_and_get_officer, ReqPosition},
     };
     use actix_identity::Identity;
     use actix_multipart::form::{json::Json, tempfile::TempFile, MultipartForm};
@@ -15,7 +16,7 @@ mod routes {
 
     #[derive(Deserialize, Debug)]
     struct ReqCreateDraftInfo {
-        division_id: i64,
+        division_onchain_id: String,
         position_index: i16,
         name: String,
         document_no: String,
@@ -35,59 +36,87 @@ mod routes {
         app_state: web::Data<AppState>,
         MultipartForm(mut form): MultipartForm<CreateDraftForm>,
     ) -> impl Responder {
-        if identity.is_none() {
-            return HttpResponse::Unauthorized().finish();
-        }
-        let officer_id = identity.unwrap().id();
-        if officer_id.is_err() {
-            return HttpResponse::InternalServerError().body("Unable to get identity info");
-        }
-        let officer_id: i64 = officer_id.unwrap().parse().unwrap();
         let client = app_state.db_pool.get().await.unwrap();
         let draft_info = form.info.into_inner();
 
-        let position_role = officier_model::validate_and_get_role(
+        let verify_result = verify_and_get_officer(
             &client,
-            officer_id,
-            draft_info.division_id,
+            &identity,
+            &draft_info.division_onchain_id,
             draft_info.position_index,
         )
         .await;
-        if position_role.is_err() {
-            return HttpResponse::NotFound().body("Position not found");
+        if let Err(response) = verify_result {
+            return response;
+        }
+        let (officer_id, position_role) = verify_result.unwrap();
+
+        if position_role != PositionRole::Staff && position_role != PositionRole::Manager {
+            return HttpResponse::Unauthorized().body("Invalid position");
         }
 
-        if let PositionRole::Staff | PositionRole::Manager = position_role.unwrap() {
-            let cloud_storage = &app_state.cloud_storage;
-            let file = form.doc.file.as_file_mut();
-            let doc_hash = document_model::create_document(&client, cloud_storage, file).await;
-            if doc_hash.is_err() {
-                return HttpResponse::InternalServerError().body("Failed to upload document");
-            }
-            let doc_hash = doc_hash.unwrap();
+        let cloud_storage = &app_state.cloud_storage;
+        let file = form.doc.file.as_file_mut();
+        let doc_hash = document_model::create_document(&client, cloud_storage, file).await;
+        if doc_hash.is_err() {
+            return HttpResponse::InternalServerError().body("Failed to upload document");
+        }
+        let doc_hash = doc_hash.unwrap();
 
-            let draft_info = CreateDraftInfo {
-                drafter: officer_id,
-                division_id: draft_info.division_id,
-                position_index: draft_info.position_index,
-                name: draft_info.name,
-                document_no: draft_info.document_no,
-                document_name: draft_info.document_name,
-                document_type: draft_info.document_type,
-                document_hash: doc_hash,
-            };
+        let draft_info = CreateDraftInfo {
+            drafter: officer_id,
+            division_onchain_id: draft_info.division_onchain_id,
+            position_index: draft_info.position_index,
+            name: draft_info.name,
+            document_no: draft_info.document_no,
+            document_name: draft_info.document_name,
+            document_type: draft_info.document_type,
+            document_hash: doc_hash,
+        };
 
-            match draft_model::create_draft(&client, &draft_info).await {
-                Ok(_) => HttpResponse::Ok().finish(),
-                Err(err) => match err {
-                    ModelError::ValidationError => {
-                        HttpResponse::BadRequest().body("Invild draft info")
-                    }
-                    _ => HttpResponse::InternalServerError().body("Failed to save draft"),
-                },
-            }
-        } else {
-            HttpResponse::Unauthorized().body("Invalid position")
+        match draft_model::create_draft(&client, &draft_info).await {
+            Ok(draft_id) => HttpResponse::Created().json(draft_id),
+            Err(err) => match err {
+                ModelError::ValidationError => HttpResponse::BadRequest().body("Invild draft info"),
+                _ => HttpResponse::InternalServerError().body("Failed to save draft"),
+            },
+        }
+    }
+
+    #[post("/list")]
+    async fn get_drafts(
+        identity: Option<Identity>,
+        app_state: web::Data<AppState>,
+        req_body: web::Json<ReqPosition>,
+    ) -> impl Responder {
+        let client = app_state.db_pool.get().await.unwrap();
+
+        let verify_result = verify_and_get_officer(
+            &client,
+            &identity,
+            &req_body.division_onchain_id,
+            req_body.position_index,
+        )
+        .await;
+        if let Err(response) = verify_result {
+            return response;
+        }
+        let (officer_id, position_role) = verify_result.unwrap();
+
+        if position_role != PositionRole::Staff && position_role != PositionRole::Manager {
+            return HttpResponse::Unauthorized().body("Invalid position");
+        }
+
+        match draft_model::get_draft_list(
+            &client,
+            officer_id,
+            &req_body.division_onchain_id,
+            req_body.position_index,
+        )
+        .await
+        {
+            Ok(drafts_list) => HttpResponse::Ok().json(drafts_list),
+            Err(_) => HttpResponse::InternalServerError().finish(),
         }
     }
 
@@ -106,6 +135,10 @@ use actix_web::web;
 use routes::*;
 
 pub fn draft_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::scope("/draft").service(create_draft))
-        .service(get_doc_types);
+    cfg.service(
+        web::scope("/draft")
+            .service(create_draft)
+            .service(get_drafts),
+    )
+    .service(get_doc_types);
 }

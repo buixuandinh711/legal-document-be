@@ -1,6 +1,6 @@
 INSERT INTO "drafts" (
         "drafter",
-        "division_id",
+        "division_onchain_id",
         "position_index",
         "name",
         "document_no",
@@ -17,4 +17,5 @@ VALUES (
         $6,
         $7,
         $8
-    );
+    )
+RETURNING id;

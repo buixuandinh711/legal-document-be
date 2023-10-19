@@ -70,7 +70,7 @@ async fn upload_to_storage(
 }
 
 async fn save_to_db(client: &Client, doc_hash: &str, resource_uri: &str) -> Result<(), ModelError> {
-    let statement = include_str!("../sql/document/create_document.sql");
+    let statement = include_str!("../sql/documents/create_document.sql");
     let statement = client.prepare(&statement).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,

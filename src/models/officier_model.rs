@@ -45,7 +45,7 @@ impl<'a> FromSql<'a> for OfficerStatus {
     }
 }
 
-#[derive(Debug, Serialize_repr)]
+#[derive(Debug, Serialize_repr, PartialEq)]
 #[repr(u8)]
 pub enum PositionRole {
     Revoked,
@@ -111,7 +111,7 @@ pub struct AuthOfficerInfo {
 
 #[derive(Serialize)]
 pub struct OnchainPosition {
-    division_id: i64,
+    division_onchain_id: String,
     division_name: String,
     position_index: i16,
     position_name: String,
@@ -259,7 +259,7 @@ pub async fn validate_and_get_info(
             position_index: row.get(2),
             position_name: row.get(3),
             position_role: row.get(4),
-            division_id: row.get(5),
+            division_onchain_id: row.get(5),
             division_name: row.get(6),
         })
         .collect();
@@ -284,22 +284,21 @@ pub async fn validate_and_get_info(
 pub async fn validate_and_get_role(
     client: &Client,
     officer_id: i64,
-    division_id: i64,
+    division_onchain_id: &str,
     position_index: i16,
 ) -> Result<PositionRole, ModelError> {
     let officer = validate_and_get_info(client, officer_id).await?;
 
-    let position = officer
-        .positions
-        .into_iter()
-        .find(|pos| pos.division_id == division_id && pos.position_index == position_index);
+    let position = officer.positions.into_iter().find(|pos| {
+        pos.division_onchain_id == division_onchain_id && pos.position_index == position_index
+    });
 
     match position {
         Some(position) => Ok(position.position_role),
         None => Err(ModelError::new(
             ModelError::NotFoundError,
             "Officer: not found position",
-            &format!("{} {} {}", officer_id, division_id, position_index),
+            &format!("{} {} {}", officer_id, division_onchain_id, position_index),
         )),
     }
 }

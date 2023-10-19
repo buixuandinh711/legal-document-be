@@ -3,7 +3,7 @@ SELECT of."name" AS "officer_name",
     op."position_index",
     op."name" as "position_name",
     op."role" as "posistion_role",
-    od."id" AS "division_id",
+    op."division_onchain_id",
     od."name" AS "division_name"
 FROM "onchain_officers" of
     INNER JOIN "onchain_positions" op ON of."address" = op."officer_address"

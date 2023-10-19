@@ -25,7 +25,7 @@ VALUES ('Hiến pháp'),
 CREATE TABLE "drafts" (
 	"id" BIGSERIAL PRIMARY KEY,
 	"drafter" BIGINT NOT NULL,
-	"division_id" BIGINT NOT NULL,
+	"division_onchain_id" VARCHAR(255) NOT NULL,
 	"position_index" SMALLINT NOT NULL,
 	"name" VARCHAR(255) NOT NULL,
 	"document_no" VARCHAR(255) NOT NULL,
@@ -36,12 +36,10 @@ CREATE TABLE "drafts" (
 	CONSTRAINT "fk_draft_officer" FOREIGN KEY("drafter") REFERENCES "officers"("id"),
 	CONSTRAINT "fk_draft_doc_type" FOREIGN KEY("document_type") REFERENCES "document_types"("id")
 );
--- Create the trigger function
-CREATE OR REPLACE FUNCTION update_drafts_updated_at() RETURNS TRIGGER AS $$ BEGIN NEW."updated_at" = NOW();
-RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
--- Create the trigger
+-- CREATE OR REPLACE FUNCTION update_drafts_updated_at() RETURNS TRIGGER AS $$ BEGIN NEW."updated_at" = NOW();
+-- RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
 CREATE TRIGGER "auto_update_drafts_updated_at" BEFORE
 INSERT
 	OR
