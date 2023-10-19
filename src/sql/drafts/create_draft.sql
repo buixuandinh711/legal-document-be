@@ -3,8 +3,9 @@ INSERT INTO "drafts" (
         "division_id",
         "position_index",
         "name",
-        "document_name",
         "document_no",
+        "document_name",
+        "document_type",
         "document_hash"
     )
 VALUES (
@@ -14,5 +15,6 @@ VALUES (
         $4,
         $5,
         $6,
-        $7
+        $7,
+        $8
     );

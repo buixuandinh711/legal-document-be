@@ -11,8 +11,9 @@ pub struct Draft {
     pub division_id: String,
     pub position_index: i16,
     pub name: String,
-    pub document_name: String,
     pub document_no: String,
+    pub document_name: String,
+    pub document_type: i32,
     pub document_hash: String,
     pub updated_at: SystemTime,
 }
@@ -22,8 +23,9 @@ pub struct CreateDraftInfo {
     pub division_id: i64,
     pub position_index: i16,
     pub name: String,
-    pub document_name: String,
     pub document_no: String,
+    pub document_name: String,
+    pub document_type: i32,
     pub document_hash: String,
 }
 
@@ -53,8 +55,9 @@ pub async fn create_draft(client: &Client, draft_info: &CreateDraftInfo) -> Resu
                 &draft_info.division_id,
                 &draft_info.position_index,
                 &draft_info.name,
-                &draft_info.document_name,
                 &draft_info.document_no,
+                &draft_info.document_name,
+                &draft_info.document_type,
                 &draft_info.document_hash,
             ],
         )

@@ -19,12 +19,12 @@ pub async fn create_document(
     db_client: &Client,
     cloud_storage: &CloudStorage,
     file: &mut File,
-) -> Result<(), ModelError> {
+) -> Result<String, ModelError> {
     let (doc_hash, buffer) = preprocess_file(file).await?;
     let resource_uri = upload_to_storage(cloud_storage, &buffer, &doc_hash).await?;
     save_to_db(db_client, &doc_hash, &resource_uri).await?;
 
-    Ok(())
+    Ok(doc_hash)
 }
 
 async fn preprocess_file(file: &mut File) -> Result<(String, Vec<u8>), ModelError> {
