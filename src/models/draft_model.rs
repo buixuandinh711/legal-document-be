@@ -29,6 +29,15 @@ pub struct CreateDraftInfo {
     pub document_hash: String,
 }
 
+pub struct DraftInfo {
+    pub id: i64,
+    pub drafter_username: String,
+    pub drafter_name: String,
+    pub name: String,
+    pub document_name: String,
+    pub updated_at: SystemTime,
+}
+
 pub async fn create_draft(client: &Client, draft_info: &CreateDraftInfo) -> Result<(), ModelError> {
     if validate_draft_info(&draft_info).is_err() {
         return Err(ModelError::new(
