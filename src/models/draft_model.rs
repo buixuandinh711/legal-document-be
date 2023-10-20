@@ -24,6 +24,19 @@ pub struct DraftsListItem {
     pub updated_at: SystemTime,
 }
 
+#[derive(Serialize)]
+pub struct DraftDetail {
+    pub id: i64,
+    pub name: String,
+    pub document_no: String,
+    pub document_name: String,
+    pub document_type: String,
+    pub updated_at: SystemTime,
+    pub doc_uri: String,
+    pub drafter_username: String,
+    pub drafter_name: String,
+}
+
 pub async fn create_draft(
     client: &Client,
     draft_info: &CreateDraftInfo,
@@ -115,6 +128,52 @@ pub async fn get_draft_list(
         .collect();
 
     Ok(drafts_list)
+}
+
+pub async fn get_draft_detail(client: &Client, draft_id: i64) -> Result<DraftDetail, ModelError> {
+    let statement = include_str!("../sql/drafts/query_draft_detail.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_draft_detail",
+            &err,
+        )
+    })?;
+
+    let query_result = client
+        .query(&statement, &[&draft_id])
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute query_draft_detail",
+                &err,
+            )
+        })?;
+
+    if query_result.is_empty() {
+        return Err(ModelError::new(
+            ModelError::NotFoundError,
+            "get_draft_detail: query draft by id",
+            &draft_id,
+        ));
+    }
+
+    let query_result = &query_result[0];
+
+    let drafts_detail = DraftDetail {
+        id: query_result.get(0),
+        name: query_result.get(1),
+        document_no: query_result.get(2),
+        document_name: query_result.get(3),
+        document_type: query_result.get(4),
+        updated_at: query_result.get(5),
+        doc_uri: query_result.get(6),
+        drafter_username: query_result.get(7),
+        drafter_name: query_result.get(8),
+    };
+
+    Ok(drafts_detail)
 }
 
 fn validate_draft_info(_draft_info: &CreateDraftInfo) -> Result<(), ModelError> {

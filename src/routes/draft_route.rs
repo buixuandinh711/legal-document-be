@@ -120,6 +120,38 @@ mod routes {
         }
     }
 
+    #[post("/detail/{draft_id}")]
+    async fn get_draft_detail(
+        path: web::Path<i64>,
+        identity: Option<Identity>,
+        app_state: web::Data<AppState>,
+        req_body: web::Json<ReqPosition>,
+    ) -> impl Responder {
+        let draft_id = path.into_inner();
+        let client = app_state.db_pool.get().await.unwrap();
+
+        let verify_result = verify_and_get_officer(
+            &client,
+            &identity,
+            &req_body.division_onchain_id,
+            req_body.position_index,
+        )
+        .await;
+        if let Err(response) = verify_result {
+            return response;
+        }
+        let (_officer_id, position_role) = verify_result.unwrap();
+
+        if position_role != PositionRole::Staff && position_role != PositionRole::Manager {
+            return HttpResponse::Unauthorized().body("Invalid position");
+        }
+
+        match draft_model::get_draft_detail(&client, draft_id).await {
+            Ok(draft) => HttpResponse::Ok().json(draft),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    }
+
     #[get("/doc-types")]
     async fn get_doc_types(app_state: web::Data<AppState>) -> impl Responder {
         let client = app_state.db_pool.get().await.unwrap();
@@ -138,7 +170,9 @@ pub fn draft_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/draft")
             .service(create_draft)
-            .service(get_drafts),
+            .service(get_drafts)
+            .service(get_draft_detail),
     )
-    .service(get_doc_types);
+    .service(get_doc_types)
+    .service(get_draft_detail);
 }
