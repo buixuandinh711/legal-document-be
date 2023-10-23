@@ -6,7 +6,8 @@ INSERT INTO "drafts" (
         "document_no",
         "document_name",
         "document_type",
-        "document_hash"
+        "document_hash",
+        "file_name"
     )
 VALUES (
         $1,
@@ -16,6 +17,7 @@ VALUES (
         $5,
         $6,
         $7,
-        $8
+        $8,
+        $9
     )
 RETURNING id;

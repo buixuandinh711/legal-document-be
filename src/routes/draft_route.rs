@@ -62,6 +62,10 @@ mod routes {
             return HttpResponse::InternalServerError().body("Failed to upload document");
         }
         let doc_hash = doc_hash.unwrap();
+        let file_name = match form.doc.file_name {
+            Some(name) => name,
+            None => "draft.pdf".to_owned(),
+        };
 
         let draft_info = CreateDraftInfo {
             drafter: officer_id,
@@ -72,6 +76,7 @@ mod routes {
             document_name: draft_info.document_name,
             document_type: draft_info.document_type,
             document_hash: doc_hash,
+            file_name: file_name,
         };
 
         match draft_model::create_draft(&client, &draft_info).await {
@@ -152,6 +157,43 @@ mod routes {
         }
     }
 
+    #[post("/submittable")]
+    async fn get_submittable_drafts(
+        identity: Option<Identity>,
+        app_state: web::Data<AppState>,
+        req_body: web::Json<ReqPosition>,
+    ) -> impl Responder {
+        let client = app_state.db_pool.get().await.unwrap();
+
+        let verify_result = verify_and_get_officer(
+            &client,
+            &identity,
+            &req_body.division_onchain_id,
+            req_body.position_index,
+        )
+        .await;
+        if let Err(response) = verify_result {
+            return response;
+        }
+        let (officer_id, position_role) = verify_result.unwrap();
+
+        if position_role != PositionRole::Staff && position_role != PositionRole::Manager {
+            return HttpResponse::Unauthorized().body("Invalid position");
+        }
+
+        match draft_model::get_submittable_drafts(
+            &client,
+            officer_id,
+            &req_body.division_onchain_id,
+            req_body.position_index,
+        )
+        .await
+        {
+            Ok(drafts_list) => HttpResponse::Ok().json(drafts_list),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    }
+
     #[get("/doc-types")]
     async fn get_doc_types(app_state: web::Data<AppState>) -> impl Responder {
         let client = app_state.db_pool.get().await.unwrap();
@@ -171,7 +213,8 @@ pub fn draft_routes(cfg: &mut web::ServiceConfig) {
         web::scope("/draft")
             .service(create_draft)
             .service(get_drafts)
-            .service(get_draft_detail),
+            .service(get_draft_detail)
+            .service(get_submittable_drafts),
     )
     .service(get_doc_types)
     .service(get_draft_detail);

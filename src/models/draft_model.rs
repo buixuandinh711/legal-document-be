@@ -12,6 +12,7 @@ pub struct CreateDraftInfo {
     pub document_name: String,
     pub document_type: i32,
     pub document_hash: String,
+    pub file_name: String,
 }
 
 #[derive(Serialize)]
@@ -31,10 +32,17 @@ pub struct DraftDetail {
     pub document_no: String,
     pub document_name: String,
     pub document_type: String,
+    pub file_name: String,
     pub updated_at: SystemTime,
     pub doc_uri: String,
     pub drafter_username: String,
     pub drafter_name: String,
+}
+
+#[derive(Serialize)]
+pub struct SubmittableDraft {
+    pub id: i64,
+    pub name: String,
 }
 
 pub async fn create_draft(
@@ -70,6 +78,7 @@ pub async fn create_draft(
                 &draft_info.document_name,
                 &draft_info.document_type,
                 &draft_info.document_hash,
+                &draft_info.file_name,
             ],
         )
         .await
@@ -167,13 +176,54 @@ pub async fn get_draft_detail(client: &Client, draft_id: i64) -> Result<DraftDet
         document_no: query_result.get(2),
         document_name: query_result.get(3),
         document_type: query_result.get(4),
-        updated_at: query_result.get(5),
-        doc_uri: query_result.get(6),
-        drafter_username: query_result.get(7),
-        drafter_name: query_result.get(8),
+        file_name: query_result.get(5),
+        updated_at: query_result.get(6),
+        doc_uri: query_result.get(7),
+        drafter_username: query_result.get(8),
+        drafter_name: query_result.get(9),
     };
 
     Ok(drafts_detail)
+}
+
+pub async fn get_submittable_drafts(
+    client: &Client,
+    officer_id: i64,
+    division_onchain_id: &str,
+    position_index: i16,
+) -> Result<Vec<SubmittableDraft>, ModelError> {
+    let statement = include_str!("../sql/drafts/query_submittable_draft.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_submittable_draft",
+            &err,
+        )
+    })?;
+
+    let query_result = client
+        .query(
+            &statement,
+            &[&officer_id, &division_onchain_id, &position_index],
+        )
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute query_submittable_draft",
+                &err,
+            )
+        })?;
+
+    let drafts_list: Vec<SubmittableDraft> = query_result
+        .iter()
+        .map(|row| SubmittableDraft {
+            id: row.get(0),
+            name: row.get(1),
+        })
+        .collect();
+
+    Ok(drafts_list)
 }
 
 fn validate_draft_info(_draft_info: &CreateDraftInfo) -> Result<(), ModelError> {
