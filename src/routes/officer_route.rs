@@ -6,9 +6,10 @@ mod routes {
     use crate::{
         app_config::AppState,
         models::{
-            officier_model::{self, AuthOfficerInfo, CreateOfficerInfo},
+            officier_model::{self, AuthOfficerInfo, CreateOfficerInfo, PositionRole},
             ModelError,
         },
+        routes::{verify_and_get_officer, ReqPosition},
     };
 
     #[derive(Deserialize, Debug)]
@@ -121,6 +122,36 @@ mod routes {
         }
     }
 
+    #[post("/key")]
+    async fn get_officer_private_key(
+        identity: Option<Identity>,
+        app_state: web::Data<AppState>,
+        req_body: web::Json<ReqPosition>,
+    ) -> impl Responder {
+        let client = app_state.db_pool.get().await.unwrap();
+
+        let verify_result = verify_and_get_officer(
+            &client,
+            &identity,
+            &req_body.division_onchain_id,
+            req_body.position_index,
+        )
+        .await;
+        if let Err(response) = verify_result {
+            return response;
+        }
+        let (officer_id, position_role) = verify_result.unwrap();
+
+        if position_role != PositionRole::Staff && position_role != PositionRole::Manager {
+            return HttpResponse::Unauthorized().body("Invalid position");
+        }
+
+        match officier_model::get_private_key(&client, officer_id).await {
+            Ok(sigs) => HttpResponse::Ok().json(sigs),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    }
+
     #[post("/logout")]
     async fn logout(identity: Option<Identity>) -> impl Responder {
         match identity {
@@ -137,8 +168,12 @@ use actix_web::web;
 use routes::*;
 
 pub fn auth_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::scope("/officer").service(create_officer))
-        .service(login)
-        .service(login_cookie)
-        .service(logout);
+    cfg.service(
+        web::scope("/officer")
+            .service(create_officer)
+            .service(get_officer_private_key),
+    )
+    .service(login)
+    .service(login_cookie)
+    .service(logout);
 }

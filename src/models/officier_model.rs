@@ -124,6 +124,12 @@ pub struct OnchainOfficer {
     positions: Vec<OnchainPosition>,
 }
 
+#[derive(Serialize)]
+pub struct OfficerPrivateKey {
+    onchain_address: String,
+    private_key: String,
+}
+
 pub async fn create_officer(
     client: &Client,
     officer_info: &CreateOfficerInfo,
@@ -303,11 +309,40 @@ pub async fn validate_and_get_role(
     }
 }
 
-fn validate_creattion_info(info: &CreateOfficerInfo) -> bool {
-    // TODO
-    {
-        info
+pub async fn get_private_key(
+    client: &Client,
+    officer_id: i64,
+) -> Result<OfficerPrivateKey, ModelError> {
+    let query_stmt = include_str!("../sql/officers/query_private_key.sql");
+    let query_stmt = client.prepare(query_stmt).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_private_key",
+            &err,
+        )
+    })?;
+
+    let query_result = client
+        .query_one(&query_stmt, &[&officer_id])
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute query_private_key",
+                &err,
+            )
+        })?;
+
+    let key_info = OfficerPrivateKey {
+        onchain_address: query_result.get(0),
+        private_key: query_result.get(1),
     };
+
+    Ok(key_info)
+}
+
+fn validate_creattion_info(_info: &CreateOfficerInfo) -> bool {
+    // TODO
     true
 }
 
