@@ -40,7 +40,7 @@ pub struct DraftDetail {
 }
 
 #[derive(Serialize)]
-pub struct SubmittableDraft {
+pub struct PublishableDraft {
     pub id: i64,
     pub name: String,
 }
@@ -186,17 +186,17 @@ pub async fn get_draft_detail(client: &Client, draft_id: i64) -> Result<DraftDet
     Ok(drafts_detail)
 }
 
-pub async fn get_submittable_drafts(
+pub async fn get_publishable_drafts(
     client: &Client,
     officer_id: i64,
     division_onchain_id: &str,
     position_index: i16,
-) -> Result<Vec<SubmittableDraft>, ModelError> {
-    let statement = include_str!("../sql/drafts/query_submittable_draft.sql");
+) -> Result<Vec<PublishableDraft>, ModelError> {
+    let statement = include_str!("../sql/drafts/query_publishable_draft.sql");
     let statement = client.prepare(&statement).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
-            "DbPool: prepare query_submittable_draft",
+            "DbPool: prepare query_publishable_draft",
             &err,
         )
     })?;
@@ -210,14 +210,14 @@ pub async fn get_submittable_drafts(
         .map_err(|err| {
             ModelError::new(
                 ModelError::InternalError,
-                "DbPool: execute query_submittable_draft",
+                "DbPool: execute query_publishable_draft",
                 &err,
             )
         })?;
 
-    let drafts_list: Vec<SubmittableDraft> = query_result
+    let drafts_list: Vec<PublishableDraft> = query_result
         .iter()
-        .map(|row| SubmittableDraft {
+        .map(|row| PublishableDraft {
             id: row.get(0),
             name: row.get(1),
         })

@@ -157,8 +157,8 @@ mod routes {
         }
     }
 
-    #[post("/submittable")]
-    async fn get_submittable_drafts(
+    #[post("/publishable")]
+    async fn get_publishable_drafts(
         identity: Option<Identity>,
         app_state: web::Data<AppState>,
         req_body: web::Json<ReqPosition>,
@@ -181,7 +181,7 @@ mod routes {
             return HttpResponse::Unauthorized().body("Invalid position");
         }
 
-        match draft_model::get_submittable_drafts(
+        match draft_model::get_publishable_drafts(
             &client,
             officer_id,
             &req_body.division_onchain_id,
@@ -246,7 +246,7 @@ pub fn draft_routes(cfg: &mut web::ServiceConfig) {
             .service(create_draft)
             .service(get_drafts)
             .service(get_draft_detail)
-            .service(get_submittable_drafts)
+            .service(get_publishable_drafts)
             .service(get_draft_signatures)
     )
     .service(get_doc_types)

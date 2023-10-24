@@ -55,9 +55,19 @@ CREATE TABLE "signatures" (
 	"draft_id" BIGINT NOT NULL,
 	"signer_id" BIGINT NOT NULL,
 	"sig" VARCHAR(255) NOT NULL,
+	"created_at" TIMESTAMP NOT NULL,
 	CONSTRAINT "fk_sig_draft" FOREIGN KEY("draft_id") REFERENCES "drafts"("id"),
 	CONSTRAINT "fk_sig_officer" FOREIGN KEY("signer_id") REFERENCES "officers"("id")
-) --------------------------------------------------------------------------------------------
+);
+------------------------------------------------
+CREATE OR REPLACE FUNCTION add_signatures_created_at() RETURNS TRIGGER AS $$ BEGIN NEW."created_at" = NOW();
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+------------------------------------------------
+CREATE TRIGGER "auto_add_signatures_created_at" BEFORE
+INSERT ON "signatures" FOR EACH ROW EXECUTE FUNCTION add_signatures_created_at();
+--------------------------------------------------------------------------------------------
 CREATE TABLE "onchain_officers"(
 	"id" BIGSERIAL PRIMARY KEY,
 	"address" VARCHAR(255) NOT NULL UNIQUE,
