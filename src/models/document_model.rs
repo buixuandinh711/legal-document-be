@@ -1,19 +1,10 @@
 use std::{fs::File, io::Read};
 
 use deadpool_postgres::Client;
-use tokio_pg_mapper_derive::PostgresMapper;
 
 use crate::{app_config::CloudStorage, utils};
 
 use super::ModelError;
-
-#[derive(PostgresMapper, Debug)]
-#[pg_mapper(table = "documents")]
-pub struct Document {
-    pub id: i64,
-    pub hash: String,
-    pub resource_uri: String,
-}
 
 pub async fn create_document(
     db_client: &Client,
@@ -32,7 +23,7 @@ async fn preprocess_file(file: &mut File) -> Result<(String, Vec<u8>), ModelErro
     file.read_to_end(&mut buffer).map_err(|err| {
         ModelError::new(ModelError::InternalError, "File: read file to buffer", &err)
     })?;
-    
+
     let doc_hash = get_doc_hash(&buffer)?;
 
     Ok((doc_hash, buffer))

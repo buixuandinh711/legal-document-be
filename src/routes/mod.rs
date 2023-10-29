@@ -8,6 +8,7 @@ use crate::models::officier_model::{self, PositionRole};
 pub mod draft_route;
 pub mod home;
 pub mod officer_route;
+pub mod published_doc_route;
 
 #[derive(Deserialize)]
 pub struct ReqPosition {

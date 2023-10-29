@@ -3,6 +3,7 @@ pub mod document_type_model;
 pub mod draft_model;
 pub mod officier_model;
 pub mod signature_model;
+pub mod published_doc_model;
 
 use derive_more::{Display, Error as DeriveError};
 use std::fmt::Display;
