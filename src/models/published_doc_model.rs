@@ -87,7 +87,7 @@ pub async fn get_published_detail(
     if query_result.is_empty() {
         return Err(ModelError::new(
             ModelError::NotFoundError,
-            "get_draft_detail: query draft by id",
+            "get_published_detail: query draft by id",
             &document_content_hash,
         ));
     }
@@ -99,7 +99,7 @@ pub async fn get_published_detail(
         name: query_result.get(2),
         doc_type: query_result.get(3),
         published_date: query_result.get(4),
-        publisher: "".to_owned() + query_result.get(5) + query_result.get(6),
+        publisher: "".to_owned() + query_result.get(5) + " - " + query_result.get(6),
         resource_uri: query_result.get(7),
     };
     Ok(doc_detail)
