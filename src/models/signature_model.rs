@@ -17,11 +17,16 @@ pub struct DocSignature {
 }
 
 #[derive(Serialize)]
+struct Position {
+    position_index: i16,
+    position_name: String,
+}
+
+#[derive(Serialize)]
 pub struct SignerPosition {
     signer_address: String,
     signer_name: String,
-    position_index: i16,
-    position_name: String,
+    positions: Vec<Position>,
 }
 
 pub async fn get_draft_signatures(
@@ -116,15 +121,29 @@ pub async fn get_signer_not_signed(
             )
         })?;
 
-    let signatures: Vec<SignerPosition> = query_result
-        .iter()
-        .map(|row| SignerPosition {
-            signer_address: row.get(0),
-            signer_name: row.get(1),
-            position_index: row.get(2),
-            position_name: row.get(3),
-        })
-        .collect();
+    let mut signers: Vec<SignerPosition> = Vec::new();
 
-    Ok(signatures)
+    for row in query_result {
+        let signer_address: String = row.get(0);
+        if let Some(signer) = signers
+            .iter_mut()
+            .find(|signer| signer.signer_address == signer_address)
+        {
+            signer.positions.push(Position {
+                position_index: row.get(2),
+                position_name: row.get(3),
+            });
+        } else {
+            signers.push(SignerPosition {
+                signer_address,
+                signer_name: row.get(1),
+                positions: vec![Position {
+                    position_index: row.get(2),
+                    position_name: row.get(3),
+                }],
+            });
+        }
+    }
+
+    Ok(signers)
 }
