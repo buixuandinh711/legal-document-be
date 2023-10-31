@@ -1,3 +1,13 @@
+DROP TRIGGER IF EXISTS "auto_update_drafts_updated_at" ON "drafts" CASCADE;
+DROP TRIGGER IF EXISTS "auto_add_signatures_created_at" ON "draft_signatures" CASCADE;
+DROP TABLE IF EXISTS "draft_signatures" CASCADE;
+DROP TABLE IF EXISTS "drafts" CASCADE;
+DROP TABLE IF EXISTS "officers" CASCADE;
+DROP TABLE IF EXISTS "document_types" CASCADE;
+DROP TABLE IF EXISTS "documents" CASCADE;
+DROP FUNCTION IF EXISTS update_drafts_updated_at CASCADE;
+DROP FUNCTION IF EXISTS add_signatures_created_at CASCADE;
+--------------------------------------------------------------------------------------------
 CREATE TABLE "officers"(
 	"id" BIGSERIAL PRIMARY KEY,
 	"username" VARCHAR(255) NOT NULL UNIQUE,
@@ -50,14 +60,21 @@ INSERT
 	OR
 UPDATE ON "drafts" FOR EACH ROW EXECUTE FUNCTION update_drafts_updated_at();
 --------------------------------------------------------------------------------------------
-CREATE TABLE "signatures" (
-	"id" BIGSERIAL PRIMARY KEY,
+CREATE TABLE "draft_signatures" (
 	"draft_id" BIGINT NOT NULL,
-	"signer_id" BIGINT NOT NULL,
-	"sig" VARCHAR(255) NOT NULL,
+	"signer_address" VARCHAR(255) NOT NULL,
+	"division_onchain_id" VARCHAR(255) NOT NULL,
+	"position_index" SMALLINT NOT NULL,
+	"signature" VARCHAR(255) NOT NULL,
 	"created_at" TIMESTAMP NOT NULL,
+	PRIMARY KEY(
+		"draft_id",
+		"signer_address",
+		"division_onchain_id",
+		"position_index"
+	),
 	CONSTRAINT "fk_sig_draft" FOREIGN KEY("draft_id") REFERENCES "drafts"("id"),
-	CONSTRAINT "fk_sig_officer" FOREIGN KEY("signer_id") REFERENCES "officers"("id")
+	CONSTRAINT "fk_sig_officer" FOREIGN KEY("signer_address") REFERENCES "officers"("onchain_address")
 );
 ------------------------------------------------
 CREATE OR REPLACE FUNCTION add_signatures_created_at() RETURNS TRIGGER AS $$ BEGIN NEW."created_at" = NOW();
@@ -66,7 +83,19 @@ END;
 $$ LANGUAGE plpgsql;
 ------------------------------------------------
 CREATE TRIGGER "auto_add_signatures_created_at" BEFORE
-INSERT ON "signatures" FOR EACH ROW EXECUTE FUNCTION add_signatures_created_at();
+INSERT ON "draft_signatures" FOR EACH ROW EXECUTE FUNCTION add_signatures_created_at();
+--------------------------------------------------------------------------------------------
+CREATE TABLE "review_tasks" (
+	"id" BIGSERIAL PRIMARY KEY,
+	"draft_id" BIGINT NOT NULL,
+	"assigner_address" VARCHAR(255) NOT NULL,
+	"assigner_division_id" VARCHAR(255) NOT NULL,
+	"assinger_position_index" SMALLINT NOT NULL,
+	"assignee_address" VARCHAR(255) NOT NULL,
+	"assignee_division_id" VARCHAR(255) NOT NULL,
+	"assingee_position_index" SMALLINT NOT NULL,
+	"status" SMALLINT NOT NULL
+);
 --------------------------------------------------------------------------------------------
 -- CREATE TABLE "onchain_officers"(
 -- 	"id" BIGSERIAL PRIMARY KEY,

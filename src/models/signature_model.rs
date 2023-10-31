@@ -4,9 +4,10 @@ use serde::Serialize;
 use super::ModelError;
 
 #[derive(Serialize)]
-pub struct SignatureInfo {
-    id: i64,
+pub struct DraftSignature {
     signer_name: String,
+    position_name: String,
+    signature: String,
 }
 
 #[derive(Serialize)]
@@ -15,10 +16,18 @@ pub struct DocSignature {
     position_name: String,
 }
 
+#[derive(Serialize)]
+pub struct SignerPosition {
+    signer_address: String,
+    signer_name: String,
+    position_index: i16,
+    position_name: String,
+}
+
 pub async fn get_draft_signatures(
     client: &Client,
     draft_id: i64,
-) -> Result<Vec<SignatureInfo>, ModelError> {
+) -> Result<Vec<DraftSignature>, ModelError> {
     let query_stmt = include_str!("../sql/signatures/query_draft_signatures.sql");
     let query_stmt = client.prepare(query_stmt).await.map_err(|err| {
         ModelError::new(
@@ -38,11 +47,12 @@ pub async fn get_draft_signatures(
             )
         })?;
 
-    let signatures: Vec<SignatureInfo> = query_result
+    let signatures: Vec<DraftSignature> = query_result
         .iter()
-        .map(|row| SignatureInfo {
-            id: row.get(0),
-            signer_name: row.get(1),
+        .map(|row| DraftSignature {
+            signer_name: row.get(0),
+            position_name: row.get(1),
+            signature: row.get(2),
         })
         .collect();
 
@@ -77,6 +87,42 @@ pub async fn get_doc_signatures(
         .map(|row| DocSignature {
             signer_name: row.get(0),
             position_name: row.get(1),
+        })
+        .collect();
+
+    Ok(signatures)
+}
+
+pub async fn get_signer_not_signed(
+    client: &Client,
+    draft_id: i64,
+) -> Result<Vec<SignerPosition>, ModelError> {
+    let query_stmt = include_str!("../sql/signatures/query_draft_signer.sql");
+    let query_stmt = client.prepare(query_stmt).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_draft_signer",
+            &err,
+        )
+    })?;
+    let query_result = client
+        .query(&query_stmt, &[&draft_id])
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute query_draft_signer",
+                &err,
+            )
+        })?;
+
+    let signatures: Vec<SignerPosition> = query_result
+        .iter()
+        .map(|row| SignerPosition {
+            signer_address: row.get(0),
+            signer_name: row.get(1),
+            position_index: row.get(2),
+            position_name: row.get(3),
         })
         .collect();
 
