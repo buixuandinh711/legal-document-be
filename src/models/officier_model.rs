@@ -10,7 +10,6 @@ use aes_gcm::{
 use deadpool_postgres::Client;
 use serde::Serialize;
 use serde_repr::Serialize_repr;
-use tokio_pg_mapper_derive::PostgresMapper;
 use tokio_postgres::types::{FromSql, Type};
 
 #[derive(PartialEq, Debug)]
@@ -85,16 +84,6 @@ impl<'a> FromSql<'a> for PositionRole {
         }
         false
     }
-}
-
-#[derive(PostgresMapper, Debug)]
-#[pg_mapper(table = "officers")]
-pub struct Officer {
-    pub id: i32,
-    pub username: String,
-    pub password: String,
-    pub onchain_address: String,
-    pub private_key: String,
 }
 
 pub struct CreateOfficerInfo {

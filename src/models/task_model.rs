@@ -4,13 +4,13 @@ use tokio_postgres::types::ToSql;
 use super::ModelError;
 
 pub struct CreateReviewTaskInfo {
-    draft_id: i64,
-    assigner_address: String,
-    assigner_division_id: String,
-    assigner_position_index: i16,
-    assignee_address: String,
-    assignee_division_id: String,
-    assignee_position_index: i16,
+    pub draft_id: i64,
+    pub assigner_address: String,
+    pub assigner_division_id: String,
+    pub assigner_position_index: i16,
+    pub assignee_address: String,
+    pub assignee_division_id: String,
+    pub assignee_position_index: i16,
 }
 
 pub async fn create_review_task(
