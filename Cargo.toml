@@ -36,3 +36,4 @@ actix-cors = "0.6.4"
 serde_repr = "0.1.16"
 tiny-keccak = { version = "2.0.0", features = ["keccak"] }
 flate2 = "1.0.28"
+actix-web-lab = "0.20.0"

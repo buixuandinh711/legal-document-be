@@ -2,6 +2,7 @@ mod app_config;
 mod models;
 mod routes;
 mod utils;
+mod middlewares;
 
 use crate::{
     app_config::{AppState, CloudStorage},

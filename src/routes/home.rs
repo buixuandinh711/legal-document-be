@@ -43,10 +43,17 @@ mod routes {
     }
 }
 
-use actix_web::web;
+use actix_web::web::{self, scope};
+use actix_web_lab::middleware::from_fn;
 use routes::*;
+
+use crate::middlewares::auth;
 
 // this function could be located in a different module
 pub fn home_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(home).service(upload_file);
+    cfg.service(
+        scope("")
+            .wrap(from_fn(auth::auth))
+            .service(home),
+    );
 }
