@@ -1,5 +1,5 @@
 INSERT INTO "drafts" (
-        "drafter",
+        "drafter_address",
         "division_onchain_id",
         "position_index",
         "name",

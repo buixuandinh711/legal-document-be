@@ -5,11 +5,11 @@ mod routes {
 
     use crate::{
         app_config::AppState,
+        middlewares::auth::AuthenticatedOfficer,
         models::{
             officier_model::{self, AuthOfficerInfo, CreateOfficerInfo, PositionRole},
             ModelError,
         },
-        routes::{verify_and_get_officer, ReqPosition},
     };
 
     #[derive(Deserialize, Debug)]
@@ -105,14 +105,14 @@ mod routes {
         if identity.is_none() {
             return HttpResponse::Unauthorized().finish();
         }
-        let officer_id = identity.as_ref().unwrap().id();
-        if officer_id.is_err() {
+        let identity = identity.unwrap().id();
+        if identity.is_err() {
             return HttpResponse::InternalServerError().body("Unable to get identity info");
         }
-        let officer_id: i64 = officer_id.unwrap().parse().unwrap();
+        let officer_address = identity.unwrap();
 
         let client = app_state.db_pool.get().await.unwrap();
-        match officier_model::validate_and_get_info(&client, "").await {
+        match officier_model::validate_and_get_info(&client, &officer_address).await {
             Ok(officer_info) => HttpResponse::Ok().json(officer_info),
             Err(err) => match err {
                 ModelError::AuthError => HttpResponse::Unauthorized().body(""),
@@ -124,29 +124,23 @@ mod routes {
 
     #[post("/key")]
     async fn get_officer_private_key(
-        identity: Option<Identity>,
         app_state: web::Data<AppState>,
-        req_body: web::Json<ReqPosition>,
+        authenticated_officer: AuthenticatedOfficer,
     ) -> impl Responder {
         let client = app_state.db_pool.get().await.unwrap();
 
-        let verify_result = verify_and_get_officer(
-            &client,
-            &identity,
-            &req_body.division_onchain_id,
-            req_body.position_index,
-        )
-        .await;
-        if let Err(response) = verify_result {
-            return response;
-        }
-        let (officer_id, position_role) = verify_result.unwrap();
+        let AuthenticatedOfficer {
+            address,
+            position_role,
+            division_id: _,
+            position_index: _,
+        } = authenticated_officer;
 
         if position_role != PositionRole::Staff && position_role != PositionRole::Manager {
             return HttpResponse::Unauthorized().body("Invalid position");
         }
 
-        match officier_model::get_private_key(&client, officer_id).await {
+        match officier_model::get_private_key(&client, &address).await {
             Ok(sigs) => HttpResponse::Ok().json(sigs),
             Err(_) => HttpResponse::InternalServerError().finish(),
         }

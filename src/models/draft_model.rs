@@ -4,7 +4,7 @@ use serde::Serialize;
 use std::time::SystemTime;
 
 pub struct CreateDraftInfo {
-    pub drafter: i64,
+    pub drafter_address: String,
     pub division_onchain_id: String,
     pub position_index: i16,
     pub name: String,
@@ -70,7 +70,7 @@ pub async fn create_draft(
         .query_one(
             &statement,
             &[
-                &draft_info.drafter,
+                &draft_info.drafter_address,
                 &draft_info.division_onchain_id,
                 &draft_info.position_index,
                 &draft_info.name,
@@ -97,7 +97,7 @@ pub async fn create_draft(
 
 pub async fn get_draft_list(
     client: &Client,
-    officer_id: i64,
+    officer_address: &str,
     division_onchain_id: &str,
     position_index: i16,
 ) -> Result<Vec<DraftsListItem>, ModelError> {
@@ -113,7 +113,7 @@ pub async fn get_draft_list(
     let query_result = client
         .query(
             &statement,
-            &[&officer_id, &division_onchain_id, &position_index],
+            &[&officer_address, &division_onchain_id, &position_index],
         )
         .await
         .map_err(|err| {
@@ -188,7 +188,7 @@ pub async fn get_draft_detail(client: &Client, draft_id: i64) -> Result<DraftDet
 
 pub async fn get_publishable_drafts(
     client: &Client,
-    officer_id: i64,
+    officer_address: &str,
     division_onchain_id: &str,
     position_index: i16,
 ) -> Result<Vec<PublishableDraft>, ModelError> {
@@ -204,7 +204,7 @@ pub async fn get_publishable_drafts(
     let query_result = client
         .query(
             &statement,
-            &[&officer_id, &division_onchain_id, &position_index],
+            &[&officer_address, &division_onchain_id, &position_index],
         )
         .await
         .map_err(|err| {

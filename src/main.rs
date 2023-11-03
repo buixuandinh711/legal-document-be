@@ -1,14 +1,14 @@
 mod app_config;
+mod middlewares;
 mod models;
 mod routes;
 mod utils;
-mod middlewares;
 
 use crate::{
     app_config::{AppState, CloudStorage},
     routes::{
         draft_route::draft_routes, home::home_routes, officer_route::auth_routes,
-        published_doc_route::published_doc_routes,
+        published_doc_route::published_doc_routes, task_route::task_routes,
     },
 };
 use actix_cors::Cors;
@@ -69,6 +69,7 @@ async fn main() -> std::io::Result<()> {
             .configure(home_routes)
             .configure(draft_routes)
             .configure(published_doc_routes)
+            .configure(task_routes)
     })
     .workers(2)
     .bind(&app_config.server_addr)?

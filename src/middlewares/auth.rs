@@ -1,5 +1,5 @@
 use std::{
-    future::{ready, Future, Ready},
+    future::{ready, Future},
     pin::Pin,
 };
 
@@ -84,7 +84,7 @@ impl FromRequest for AuthenticatedOfficer {
                 .db_pool
                 .get()
                 .await
-                .map_err(|err| ErrorInternalServerError("Failed to get db client"))?;
+                .map_err(|_err| ErrorInternalServerError("Failed to get db client"))?;
 
             let position_role = officier_model::validate_and_get_role(
                 &client,

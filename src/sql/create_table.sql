@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS "drafts" CASCADE;
 DROP TABLE IF EXISTS "officers" CASCADE;
 DROP TABLE IF EXISTS "document_types" CASCADE;
 DROP TABLE IF EXISTS "documents" CASCADE;
+DROP TABLE IF EXISTS "review_tasks" CASCADE;
 DROP FUNCTION IF EXISTS update_drafts_updated_at CASCADE;
 DROP FUNCTION IF EXISTS add_signatures_created_at CASCADE;
 --------------------------------------------------------------------------------------------
@@ -36,7 +37,7 @@ VALUES ('Hiến pháp'),
 --------------------------------------------------------------------------------------------
 CREATE TABLE "drafts" (
 	"id" BIGSERIAL PRIMARY KEY,
-	"drafter" BIGINT NOT NULL,
+	"drafter_address" VARCHAR(42) NOT NULL,
 	"division_onchain_id" VARCHAR(255) NOT NULL,
 	"position_index" SMALLINT NOT NULL,
 	"name" VARCHAR(255) NOT NULL,
@@ -46,7 +47,7 @@ CREATE TABLE "drafts" (
 	"document_hash" VARCHAR(255) NOT NULL,
 	"file_name" VARCHAR(255) NOT NULL,
 	"updated_at" TIMESTAMP NOT NULL,
-	CONSTRAINT "fk_draft_officer" FOREIGN KEY("drafter") REFERENCES "officers"("id"),
+	CONSTRAINT "fk_draft_officer" FOREIGN KEY("drafter_address") REFERENCES "officers"("onchain_address"),
 	CONSTRAINT "fk_draft_doc_type" FOREIGN KEY("document_type") REFERENCES "document_types"("id")
 );
 ------------------------------------------------

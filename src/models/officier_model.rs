@@ -375,7 +375,7 @@ pub async fn validate_and_get_role(
 
 pub async fn get_private_key(
     client: &Client,
-    officer_id: i64,
+    officer_address: &str,
 ) -> Result<OfficerPrivateKey, ModelError> {
     let query_stmt = include_str!("../sql/officers/query_private_key.sql");
     let query_stmt = client.prepare(query_stmt).await.map_err(|err| {
@@ -387,7 +387,7 @@ pub async fn get_private_key(
     })?;
 
     let query_result = client
-        .query_one(&query_stmt, &[&officer_id])
+        .query_one(&query_stmt, &[&officer_address])
         .await
         .map_err(|err| {
             ModelError::new(
@@ -398,8 +398,8 @@ pub async fn get_private_key(
         })?;
 
     let key_info = OfficerPrivateKey {
-        onchain_address: query_result.get(0),
-        private_key: query_result.get(1),
+        onchain_address: officer_address.to_owned(),
+        private_key: query_result.get(0),
     };
 
     Ok(key_info)

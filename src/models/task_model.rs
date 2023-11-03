@@ -77,7 +77,7 @@ pub async fn create_review_task(
         )
     })?;
 
-    let result = client.query_one(&statement, &params).await.map_err(|err| {
+    let _result = client.query_one(&statement, &params).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
             "DbPool: execute create_review_task",
