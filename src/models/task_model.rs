@@ -32,7 +32,7 @@ pub async fn create_review_task(
     for row in tasks_info.iter() {
         if i == 1 {
             statement = format!(
-                "{} (${},${},${},${},${},${},${})",
+                "{} (${},${},${},${},${},${},${}, 0)",
                 statement,
                 i,
                 i + 1,
@@ -44,7 +44,7 @@ pub async fn create_review_task(
             );
         } else {
             statement = format!(
-                "{}, (${},${},${},${},${},${},${})",
+                "{}, (${},${},${},${},${},${},${}, 0)",
                 statement,
                 i,
                 i + 1,
@@ -77,7 +77,7 @@ pub async fn create_review_task(
         )
     })?;
 
-    let _result = client.query_one(&statement, &params).await.map_err(|err| {
+    let _result = client.execute(&statement, &params).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
             "DbPool: execute create_review_task",

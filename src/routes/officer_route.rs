@@ -122,7 +122,7 @@ mod routes {
         }
     }
 
-    #[post("/key")]
+    #[get("/key")]
     async fn get_officer_private_key(
         app_state: web::Data<AppState>,
         authenticated_officer: AuthenticatedOfficer,

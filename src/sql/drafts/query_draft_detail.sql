@@ -12,4 +12,5 @@ FROM "drafts" d
     INNER JOIN "documents" doc ON d."document_hash" = doc."hash"
     INNER JOIN "document_types" dt ON d."document_type" = dt."id"
     INNER JOIN "onchain_officers" oo ON d."drafter_address" = oo."address"
+    INNER JOIN "officers" o ON o."onchain_address" = d."drafter_address"
 WHERE d."id" = $1;

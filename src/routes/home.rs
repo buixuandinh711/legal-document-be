@@ -35,10 +35,10 @@ mod routes {
     }
 }
 
-use actix_web::web::{self, scope};
+use actix_web::web::{self};
 use routes::*;
 
 // this function could be located in a different module
 pub fn home_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(scope("").service(home));
+    cfg.service(home);
 }

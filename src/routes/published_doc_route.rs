@@ -4,9 +4,9 @@ mod routes {
         middlewares::auth::AuthenticatedOfficer,
         models::{officier_model::PositionRole, published_doc_model, signature_model},
     };
-    use actix_web::{post, web, HttpResponse, Responder};
+    use actix_web::{get, web, HttpResponse, Responder};
 
-    #[post("/list")]
+    #[get("/publisheds")]
     async fn get_docs(
         app_state: web::Data<AppState>,
         authenticated_officer: AuthenticatedOfficer,
@@ -30,7 +30,7 @@ mod routes {
         }
     }
 
-    #[post("/detail/{doc_content_hash}")]
+    #[get("/publisheds/{doc_content_hash}")]
     async fn get_doc_detail(
         path: web::Path<String>,
         app_state: web::Data<AppState>,
@@ -56,7 +56,7 @@ mod routes {
         }
     }
 
-    #[post("/signatures/{draft_id}")]
+    #[get("/signatures/{draft_id}")]
     async fn get_doc_signatures(
         path: web::Path<String>,
         app_state: web::Data<AppState>,
@@ -87,10 +87,7 @@ use actix_web::web;
 use routes::*;
 
 pub fn published_doc_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(
-        web::scope("/published")
-            .service(get_docs)
-            .service(get_doc_detail)
-            .service(get_doc_signatures),
-    );
+    cfg.service(get_docs)
+        .service(get_doc_detail)
+        .service(web::scope("/publisheds").service(get_doc_signatures));
 }

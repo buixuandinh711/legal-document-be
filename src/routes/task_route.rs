@@ -19,7 +19,7 @@ mod routes {
         assignees: Vec<ReqSignerPosition>,
     }
 
-    #[post("/create")]
+    #[post("/review-tasks")]
     async fn create_review_task(
         app_state: web::Data<AppState>,
         authenticated_officer: AuthenticatedOfficer,
@@ -64,5 +64,5 @@ use actix_web::web;
 use routes::*;
 
 pub fn task_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::scope("/review").service(create_review_task));
+    cfg.service(create_review_task);
 }

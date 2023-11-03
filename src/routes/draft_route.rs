@@ -27,7 +27,7 @@ mod routes {
         info: Json<ReqCreateDraftInfo>,
     }
 
-    #[post("/create")]
+    #[post("/drafts")]
     async fn create_draft(
         app_state: web::Data<AppState>,
         MultipartForm(mut form): MultipartForm<CreateDraftForm>,
@@ -80,7 +80,7 @@ mod routes {
         }
     }
 
-    #[post("/list")]
+    #[get("/drafts")]
     async fn get_drafts(
         app_state: web::Data<AppState>,
         authenticated_officer: AuthenticatedOfficer,
@@ -104,7 +104,7 @@ mod routes {
         }
     }
 
-    #[post("/detail/{draft_id}")]
+    #[get("/drafts/{draft_id}")]
     async fn get_draft_detail(
         path: web::Path<i64>,
         app_state: web::Data<AppState>,
@@ -130,7 +130,7 @@ mod routes {
         }
     }
 
-    #[post("/publishable")]
+    #[get("/publishable-drafts")]
     async fn get_publishable_drafts(
         app_state: web::Data<AppState>,
         authenticated_officer: AuthenticatedOfficer,
@@ -156,7 +156,7 @@ mod routes {
         }
     }
 
-    #[post("/signatures/{draft_id}")]
+    #[get("/drafts/{draft_id}/signatures")]
     async fn get_draft_signatures(
         path: web::Path<i64>,
         app_state: web::Data<AppState>,
@@ -182,7 +182,7 @@ mod routes {
         }
     }
 
-    #[post("/not-signed/{draft_id}")]
+    #[get("/drafts/{draft_id}/not-signed")]
     async fn get_singers_not_signed(
         path: web::Path<i64>,
         app_state: web::Data<AppState>,
@@ -223,14 +223,11 @@ use actix_web::web;
 use routes::*;
 
 pub fn draft_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(
-        web::scope("/draft")
-            .service(create_draft)
-            .service(get_drafts)
-            .service(get_draft_detail)
-            .service(get_publishable_drafts)
-            .service(get_draft_signatures)
-            .service(get_singers_not_signed),
-    )
-    .service(get_doc_types);
+    cfg.service(create_draft)
+        .service(get_drafts)
+        .service(get_draft_detail)
+        .service(get_publishable_drafts)
+        .service(get_draft_signatures)
+        .service(get_singers_not_signed)
+        .service(get_doc_types);
 }
