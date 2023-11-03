@@ -80,9 +80,9 @@ mod routes {
 
         match officier_model::authenticate_officer(&client, &auth_info).await {
             Ok(auth_result) => {
-                if let Some((officer_id, officer_info)) = auth_result {
-                    match Identity::login(&req.extensions(), officer_id.to_string()) {
-                        Ok(_) => HttpResponse::Ok().json(officer_info),
+                if let Some(officer_address) = auth_result {
+                    match Identity::login(&req.extensions(), officer_address.to_string()) {
+                        Ok(_) => HttpResponse::Ok().body("Login successfully"),
                         Err(_) => HttpResponse::InternalServerError().body("Internal server error"),
                     }
                 } else {
@@ -112,7 +112,7 @@ mod routes {
         let officer_id: i64 = officer_id.unwrap().parse().unwrap();
 
         let client = app_state.db_pool.get().await.unwrap();
-        match officier_model::validate_and_get_info(&client, officer_id).await {
+        match officier_model::validate_and_get_info(&client, "").await {
             Ok(officer_info) => HttpResponse::Ok().json(officer_info),
             Err(err) => match err {
                 ModelError::AuthError => HttpResponse::Unauthorized().body(""),

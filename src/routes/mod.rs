@@ -34,7 +34,7 @@ pub async fn verify_and_get_officer(
 
     let position_role = officier_model::validate_and_get_role(
         &client,
-        officer_id,
+        "officer_id",
         division_onchain_id,
         position_index,
     )

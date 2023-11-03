@@ -2,7 +2,9 @@ mod routes {
     use actix_multipart::form::{tempfile::TempFile, MultipartForm};
     use actix_web::{get, post, web::Data, Error, HttpResponse, Responder};
 
-    use crate::{app_config::AppState, models::document_model};
+    use crate::{
+        app_config::AppState, middlewares::auth::AuthenticatedOfficer, models::document_model,
+    };
 
     #[derive(Debug, MultipartForm)]
     struct UploadForm {
@@ -28,32 +30,15 @@ mod routes {
     }
 
     #[get("/")]
-    pub async fn home() -> impl Responder {
-        let html = r#"<html>
-            <head><title>Upload Test</title></head>
-            <body>
-                <form target="/" method="post" enctype="multipart/form-data">
-                    <input type="file" multiple name="file"/>
-                    <button type="submit">Submit</button>
-                </form>
-            </body>
-        </html>"#;
-
-        HttpResponse::Ok().body(html)
+    pub async fn home(officer: AuthenticatedOfficer) -> impl Responder {
+        HttpResponse::Ok().json(officer)
     }
 }
 
 use actix_web::web::{self, scope};
-use actix_web_lab::middleware::from_fn;
 use routes::*;
-
-use crate::middlewares::auth;
 
 // this function could be located in a different module
 pub fn home_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(
-        scope("")
-            .wrap(from_fn(auth::auth))
-            .service(home),
-    );
+    cfg.service(scope("").service(home));
 }
