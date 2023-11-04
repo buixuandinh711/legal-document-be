@@ -1,8 +1,8 @@
 use std::time::SystemTime;
 
 use deadpool_postgres::Client;
-use tokio_postgres::types::ToSql;
 use serde::Serialize;
+use tokio_postgres::types::ToSql;
 
 use super::ModelError;
 
@@ -21,7 +21,18 @@ pub struct CreatedReviewTaskItem {
     id: i64,
     draft_name: String,
     assignee: String,
+    assignee_position: String,
     created_at: SystemTime,
+    status: i16,
+}
+
+#[derive(Serialize)]
+pub struct AssignedReviewTaskItem {
+    id: i64,
+    draft_name: String,
+    assigner: String,
+    assigner_position: String,
+    assigned_at: SystemTime,
     status: i16,
 }
 
@@ -134,8 +145,53 @@ pub async fn get_created_review_tasks(
         .map(|row| CreatedReviewTaskItem {
             id: row.get(0),
             draft_name: row.get(1),
-            assignee: row.get::<usize, String>(2) + row.get(3),
+            assignee: row.get(2),
+            assignee_position: row.get(3),
             created_at: row.get(4),
+            status: row.get(5),
+        })
+        .collect();
+
+    Ok(tasks)
+}
+
+pub async fn get_assigned_review_tasks(
+    client: &Client,
+    assignee_address: &str,
+    assignee_div_id: &str,
+    assignee_pos_index: i16,
+) -> Result<Vec<AssignedReviewTaskItem>, ModelError> {
+    let statement = include_str!("../sql/tasks/query_assigned_review_tasks.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_assigned_review_tasks",
+            &err,
+        )
+    })?;
+
+    let query_result = client
+        .query(
+            &statement,
+            &[&assignee_address, &assignee_div_id, &assignee_pos_index],
+        )
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute query_assigned_review_tasks",
+                &err,
+            )
+        })?;
+
+    let tasks: Vec<AssignedReviewTaskItem> = query_result
+        .iter()
+        .map(|row| AssignedReviewTaskItem {
+            id: row.get(0),
+            draft_name: row.get(1),
+            assigner: row.get(2),
+            assigner_position: row.get(3),
+            assigned_at: row.get(4),
             status: row.get(5),
         })
         .collect();
