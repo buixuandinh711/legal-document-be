@@ -110,6 +110,40 @@ mod routes {
             Err(_) => HttpResponse::InternalServerError().finish(),
         }
     }
+
+    #[get("/assigned-review-tasks/{id}")]
+    async fn get_assigned_review_task_detail(
+        path: web::Path<i64>,
+        app_state: web::Data<AppState>,
+        authenticated_officer: AuthenticatedOfficer,
+    ) -> impl Responder {
+        let task_id = path.into_inner();
+        let client = app_state.db_pool.get().await.unwrap();
+
+        let AuthenticatedOfficer {
+            address,
+            division_id,
+            position_index,
+            position_role,
+        } = authenticated_officer;
+
+        if position_role != PositionRole::Manager && position_role != PositionRole::Staff {
+            return HttpResponse::Unauthorized().body("Invalid position");
+        }
+
+        match task_model::get_assigned_review_task_detail(
+            &client,
+            &address,
+            &division_id,
+            position_index,
+            task_id,
+        )
+        .await
+        {
+            Ok(task) => HttpResponse::Ok().json(task),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    }
 }
 
 use actix_web::web;
@@ -118,5 +152,6 @@ use routes::*;
 pub fn task_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(create_review_task)
         .service(get_created_review_tasks)
-        .service(get_assigned_review_tasks);
+        .service(get_assigned_review_tasks)
+        .service(get_assigned_review_task_detail);
 }

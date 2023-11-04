@@ -36,6 +36,17 @@ pub struct AssignedReviewTaskItem {
     status: i16,
 }
 
+#[derive(Serialize)]
+pub struct AssignedReviewTaskDetail {
+    id: i64,
+    draft_id: i64,
+    draft_name: String,
+    assigner: String,
+    assigner_position: String,
+    assigned_at: SystemTime,
+    status: i16,
+}
+
 pub async fn create_review_task(
     client: &Client,
     tasks_info: &[CreateReviewTaskInfo],
@@ -197,6 +208,54 @@ pub async fn get_assigned_review_tasks(
         .collect();
 
     Ok(tasks)
+}
+
+pub async fn get_assigned_review_task_detail(
+    client: &Client,
+    assignee_address: &str,
+    assignee_div_id: &str,
+    assignee_pos_index: i16,
+    task_id: i64,
+) -> Result<AssignedReviewTaskDetail, ModelError> {
+    let statement = include_str!("../sql/tasks/query_assigned_review_task_detail.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_assigned_review_task_detail",
+            &err,
+        )
+    })?;
+
+    let query_result = client
+        .query_one(
+            &statement,
+            &[
+                &assignee_address,
+                &assignee_div_id,
+                &assignee_pos_index,
+                &task_id,
+            ],
+        )
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute query_assigned_review_task_detail",
+                &err,
+            )
+        })?;
+
+    let task = AssignedReviewTaskDetail {
+        id: query_result.get(0),
+        draft_id: query_result.get(1),
+        draft_name: query_result.get(2),
+        assigner: query_result.get(3),
+        assigner_position: query_result.get(4),
+        assigned_at: query_result.get(5),
+        status: query_result.get(6),
+    };
+
+    Ok(task)
 }
 
 fn validate_review_task_info(_tasks_info: &[CreateReviewTaskInfo]) -> Result<(), ModelError> {
