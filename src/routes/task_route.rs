@@ -4,7 +4,7 @@ mod routes {
         middlewares::auth::AuthenticatedOfficer,
         models::{officier_model::PositionRole, task_model},
     };
-    use actix_web::{post, web, HttpResponse, Responder};
+    use actix_web::{get, post, web, HttpResponse, Responder};
     use serde::Deserialize;
 
     #[derive(Deserialize, Debug)]
@@ -58,11 +58,38 @@ mod routes {
             Err(_) => HttpResponse::InternalServerError().finish(),
         }
     }
+
+    #[get("/created-review-tasks")]
+    async fn get_created_review_tasks(
+        app_state: web::Data<AppState>,
+        authenticated_officer: AuthenticatedOfficer,
+    ) -> impl Responder {
+        let client = app_state.db_pool.get().await.unwrap();
+
+        let AuthenticatedOfficer {
+            address,
+            division_id,
+            position_index,
+            position_role,
+        } = authenticated_officer;
+
+        if position_role != PositionRole::Manager {
+            return HttpResponse::Unauthorized().body("Invalid position");
+        }
+
+        match task_model::get_created_review_tasks(&client, &address, &division_id, position_index)
+            .await
+        {
+            Ok(tasks) => HttpResponse::Ok().json(tasks),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    }
 }
 
 use actix_web::web;
 use routes::*;
 
 pub fn task_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(create_review_task);
+    cfg.service(create_review_task)
+        .service(get_created_review_tasks);
 }

@@ -95,8 +95,17 @@ CREATE TABLE "review_tasks" (
 	"assignee_address" VARCHAR(255) NOT NULL,
 	"assignee_division_id" VARCHAR(255) NOT NULL,
 	"assingee_position_index" SMALLINT NOT NULL,
+	"created_at" TIMESTAMP NOT NULL,
 	"status" SMALLINT NOT NULL
 );
+------------------------------------------------
+CREATE OR REPLACE FUNCTION add_review_task_created_at() RETURNS TRIGGER AS $$ BEGIN NEW."created_at" = NOW();
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+------------------------------------------------
+CREATE TRIGGER "auto_add_review_task_created_at" BEFORE
+INSERT ON "review_tasks" FOR EACH ROW EXECUTE FUNCTION add_review_task_created_at();
 --------------------------------------------------------------------------------------------
 -- CREATE TABLE "onchain_officers"(
 -- 	"id" BIGSERIAL PRIMARY KEY,
