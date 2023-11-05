@@ -1,11 +1,10 @@
 mod routes {
     use crate::{
         app_config::AppState,
-        models::{officier_model::PositionRole, task_model},
-        routes::verify_and_get_officer,
+        middlewares::auth::AuthenticatedOfficer,
+        models::{officier_model::PositionRole, signature_model, task_model},
     };
-    use actix_identity::Identity;
-    use actix_web::{post, web, HttpResponse, Responder};
+    use actix_web::{get, post, web, HttpResponse, Responder};
     use serde::Deserialize;
 
     #[derive(Deserialize, Debug)]
@@ -17,48 +16,44 @@ mod routes {
     #[derive(Deserialize, Debug)]
     struct CreateReviewTaskBody {
         draft_id: i64,
-        asssigner_div_id: String,
-        assigner_pos_index: i16,
         assignees: Vec<ReqSignerPosition>,
     }
 
-    #[post("/create")]
+    #[derive(Deserialize, Debug)]
+    struct SignReviewDraftBody {
+        signature: String,
+    }
+
+    #[post("/review-tasks")]
     async fn create_review_task(
-        identity: Option<Identity>,
         app_state: web::Data<AppState>,
+        authenticated_officer: AuthenticatedOfficer,
         req_body: web::Json<CreateReviewTaskBody>,
     ) -> impl Responder {
         let client = app_state.db_pool.get().await.unwrap();
         let req_body = req_body.into_inner();
 
-        let verify_result = verify_and_get_officer(
-            &client,
-            &identity,
-            &req_body.asssigner_div_id,
-            req_body.assigner_pos_index,
-        )
-        .await;
-        if let Err(response) = verify_result {
-            return response;
-        }
-        let (_officer_id, position_role) = verify_result.unwrap();
+        let AuthenticatedOfficer {
+            address,
+            division_id,
+            position_index,
+            position_role,
+        } = authenticated_officer;
 
         if position_role != PositionRole::Manager {
             return HttpResponse::Unauthorized().body("Invalid position");
         }
-
-        let assigner_address = "".to_owned();
 
         let tasks_info: Vec<_> = req_body
             .assignees
             .into_iter()
             .map(|assignee| task_model::CreateReviewTaskInfo {
                 draft_id: req_body.draft_id,
-                assigner_address: assigner_address.clone(),
-                assigner_division_id: req_body.asssigner_div_id.clone(),
-                assigner_position_index: req_body.assigner_pos_index,
+                assigner_address: address.clone(),
+                assigner_division_id: division_id.clone(),
+                assigner_position_index: position_index.clone(),
                 assignee_address: assignee.signer_address,
-                assignee_division_id: req_body.asssigner_div_id.clone(),
+                assignee_division_id: division_id.clone(),
                 assignee_position_index: assignee.position_index,
             })
             .collect();
@@ -68,11 +63,156 @@ mod routes {
             Err(_) => HttpResponse::InternalServerError().finish(),
         }
     }
+
+    #[get("/created-review-tasks")]
+    async fn get_created_review_tasks(
+        app_state: web::Data<AppState>,
+        authenticated_officer: AuthenticatedOfficer,
+    ) -> impl Responder {
+        let client = app_state.db_pool.get().await.unwrap();
+
+        let AuthenticatedOfficer {
+            address,
+            division_id,
+            position_index,
+            position_role,
+        } = authenticated_officer;
+
+        if position_role != PositionRole::Manager {
+            return HttpResponse::Unauthorized().body("Invalid position");
+        }
+
+        match task_model::get_created_review_tasks(&client, &address, &division_id, position_index)
+            .await
+        {
+            Ok(tasks) => HttpResponse::Ok().json(tasks),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    }
+
+    #[get("/assigned-review-tasks")]
+    async fn get_assigned_review_tasks(
+        app_state: web::Data<AppState>,
+        authenticated_officer: AuthenticatedOfficer,
+    ) -> impl Responder {
+        let client = app_state.db_pool.get().await.unwrap();
+
+        let AuthenticatedOfficer {
+            address,
+            division_id,
+            position_index,
+            position_role,
+        } = authenticated_officer;
+
+        if position_role != PositionRole::Manager && position_role != PositionRole::Staff {
+            return HttpResponse::Unauthorized().body("Invalid position");
+        }
+
+        match task_model::get_assigned_review_tasks(&client, &address, &division_id, position_index)
+            .await
+        {
+            Ok(tasks) => HttpResponse::Ok().json(tasks),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    }
+
+    #[get("/assigned-review-tasks/{id}")]
+    async fn get_assigned_review_task_detail(
+        path: web::Path<i64>,
+        app_state: web::Data<AppState>,
+        authenticated_officer: AuthenticatedOfficer,
+    ) -> impl Responder {
+        let task_id = path.into_inner();
+        let client = app_state.db_pool.get().await.unwrap();
+
+        let AuthenticatedOfficer {
+            address,
+            division_id,
+            position_index,
+            position_role,
+        } = authenticated_officer;
+
+        if position_role != PositionRole::Manager && position_role != PositionRole::Staff {
+            return HttpResponse::Unauthorized().body("Invalid position");
+        }
+
+        match task_model::get_assigned_review_task_detail(
+            &client,
+            &address,
+            &division_id,
+            position_index,
+            task_id,
+        )
+        .await
+        {
+            Ok(task) => HttpResponse::Ok().json(task),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    }
+
+    #[post("/review-tasks/sign/{id}")]
+    async fn sign_reviewed_draft(
+        path: web::Path<i64>,
+        app_state: web::Data<AppState>,
+        authenticated_officer: AuthenticatedOfficer,
+        req_body: web::Json<SignReviewDraftBody>,
+    ) -> impl Responder {
+        let client = app_state.db_pool.get().await.unwrap();
+        let task_id = path.into_inner();
+
+        let task_detail = task_model::get_review_task_detail(&client, &task_id).await;
+        if task_detail.is_err() {
+            return HttpResponse::InternalServerError().body("Failed to get task detail");
+        }
+        let task_detail = task_detail.unwrap();
+
+        let AuthenticatedOfficer {
+            address,
+            division_id,
+            position_index,
+            position_role,
+        } = authenticated_officer;
+
+        if !(task_detail.assignee_address == address
+            && task_detail.assignee_division_id == division_id
+            && task_detail.assingee_position_index == position_index)
+        {
+            return HttpResponse::Unauthorized().body("Not the task assignee");
+        }
+
+        if position_role != PositionRole::Manager && position_role != PositionRole::Staff {
+            return HttpResponse::Unauthorized().body("Invalid position role");
+        }
+
+        let req_body = req_body.into_inner();
+
+        if let Err(_) = signature_model::create_draft_signature(
+            &client,
+            &task_detail.draft_id,
+            &address,
+            &division_id,
+            &position_index,
+            &req_body.signature,
+        )
+        .await
+        {
+            return HttpResponse::InternalServerError().finish();
+        }
+
+        match task_model::update_review_task_signed(&client, &task_id).await {
+            Ok(_) => HttpResponse::Created().body("Review task draft signed"),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    }
 }
 
 use actix_web::web;
 use routes::*;
 
 pub fn task_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::scope("/review").service(create_review_task));
+    cfg.service(create_review_task)
+        .service(get_created_review_tasks)
+        .service(get_assigned_review_tasks)
+        .service(get_assigned_review_task_detail)
+        .service(sign_reviewed_draft);
 }

@@ -1,4 +1,3 @@
-SELECT "onchain_address",
-    "private_key"
+SELECT "private_key"
 FROM "officers"
-WHERE "id" = $1;
+WHERE "onchain_address" = $1;

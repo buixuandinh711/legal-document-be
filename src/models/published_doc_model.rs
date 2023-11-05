@@ -19,7 +19,7 @@ pub struct PublishedDocDetail {
     pub doc_type: String,
     pub publisher: String,
     pub published_date: i32,
-    pub resource_uri: String,
+    pub resource_uri: Option<String>,
 }
 
 pub async fn get_published_docs(
