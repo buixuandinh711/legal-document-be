@@ -147,3 +147,49 @@ pub async fn get_signer_not_signed(
 
     Ok(signers)
 }
+
+pub async fn create_draft_signature(
+    client: &Client,
+    draft_id: &i64,
+    singer_address: &str,
+    division_id: &str,
+    position_index: &i16,
+    signature: &str,
+) -> Result<(), ModelError> {
+    let query_stmt = include_str!("../sql/signatures/create_draft_sig.sql");
+    let query_stmt = client.prepare(query_stmt).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare create_draft_sig",
+            &err,
+        )
+    })?;
+    let execute_result = client
+        .execute(
+            &query_stmt,
+            &[
+                &draft_id,
+                &singer_address,
+                &division_id,
+                &position_index,
+                &signature,
+            ],
+        )
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute create_draft_sig",
+                &err,
+            )
+        })?;
+
+    match execute_result {
+        1 => Ok(()),
+        val => Err(ModelError::new(
+            ModelError::InternalError,
+            "create_draft_signature: invalid insert result",
+            &val,
+        )),
+    }
+}

@@ -2,7 +2,7 @@ mod routes {
     use crate::{
         app_config::AppState,
         middlewares::auth::AuthenticatedOfficer,
-        models::{officier_model::PositionRole, task_model},
+        models::{officier_model::PositionRole, signature_model, task_model},
     };
     use actix_web::{get, post, web, HttpResponse, Responder};
     use serde::Deserialize;
@@ -17,6 +17,11 @@ mod routes {
     struct CreateReviewTaskBody {
         draft_id: i64,
         assignees: Vec<ReqSignerPosition>,
+    }
+
+    #[derive(Deserialize, Debug)]
+    struct SignReviewDraftBody {
+        signature: String,
     }
 
     #[post("/review-tasks")]
@@ -144,6 +149,61 @@ mod routes {
             Err(_) => HttpResponse::InternalServerError().finish(),
         }
     }
+
+    #[post("/review-tasks/sign/{id}")]
+    async fn sign_reviewed_draft(
+        path: web::Path<i64>,
+        app_state: web::Data<AppState>,
+        authenticated_officer: AuthenticatedOfficer,
+        req_body: web::Json<SignReviewDraftBody>,
+    ) -> impl Responder {
+        let client = app_state.db_pool.get().await.unwrap();
+        let task_id = path.into_inner();
+
+        let task_detail = task_model::get_review_task_detail(&client, &task_id).await;
+        if task_detail.is_err() {
+            return HttpResponse::InternalServerError().body("Failed to get task detail");
+        }
+        let task_detail = task_detail.unwrap();
+
+        let AuthenticatedOfficer {
+            address,
+            division_id,
+            position_index,
+            position_role,
+        } = authenticated_officer;
+
+        if !(task_detail.assignee_address == address
+            && task_detail.assignee_division_id == division_id
+            && task_detail.assingee_position_index == position_index)
+        {
+            return HttpResponse::Unauthorized().body("Not the task assignee");
+        }
+
+        if position_role != PositionRole::Manager && position_role != PositionRole::Staff {
+            return HttpResponse::Unauthorized().body("Invalid position role");
+        }
+
+        let req_body = req_body.into_inner();
+
+        if let Err(_) = signature_model::create_draft_signature(
+            &client,
+            &task_detail.draft_id,
+            &address,
+            &division_id,
+            &position_index,
+            &req_body.signature,
+        )
+        .await
+        {
+            return HttpResponse::InternalServerError().finish();
+        }
+
+        match task_model::update_review_task_signed(&client, &task_id).await {
+            Ok(_) => HttpResponse::Created().body("Review task draft signed"),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    }
 }
 
 use actix_web::web;
@@ -153,5 +213,6 @@ pub fn task_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(create_review_task)
         .service(get_created_review_tasks)
         .service(get_assigned_review_tasks)
-        .service(get_assigned_review_task_detail);
+        .service(get_assigned_review_task_detail)
+        .service(sign_reviewed_draft);
 }

@@ -47,6 +47,19 @@ pub struct AssignedReviewTaskDetail {
     status: i16,
 }
 
+#[derive(Debug, Serialize)]
+pub struct ReviewTaskDetail {
+    pub draft_id: i64,
+    pub assigner_address: String,
+    pub assigner_division_id: String,
+    pub assinger_position_index: i16,
+    pub assignee_address: String,
+    pub assignee_division_id: String,
+    pub assingee_position_index: i16,
+    pub created_at: SystemTime,
+    pub status: i16,
+}
+
 pub async fn create_review_task(
     client: &Client,
     tasks_info: &[CreateReviewTaskInfo],
@@ -256,6 +269,76 @@ pub async fn get_assigned_review_task_detail(
     };
 
     Ok(task)
+}
+
+pub async fn get_review_task_detail(
+    client: &Client,
+    task_id: &i64,
+) -> Result<ReviewTaskDetail, ModelError> {
+    let statement = include_str!("../sql/tasks/query_review_task_detail.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_review_task_detail",
+            &err,
+        )
+    })?;
+
+    let query_result = client
+        .query_one(&statement, &[&task_id])
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute query_review_task_detail",
+                &err,
+            )
+        })?;
+
+    let task = ReviewTaskDetail {
+        draft_id: query_result.get(0),
+        assigner_address: query_result.get(1),
+        assigner_division_id: query_result.get(2),
+        assinger_position_index: query_result.get(3),
+        assignee_address: query_result.get(4),
+        assignee_division_id: query_result.get(5),
+        assingee_position_index: query_result.get(6),
+        created_at: query_result.get(7),
+        status: query_result.get(8),
+    };
+
+    Ok(task)
+}
+
+pub async fn update_review_task_signed(client: &Client, task_id: &i64) -> Result<(), ModelError> {
+    let statement = include_str!("../sql/tasks/update_review_task_signed.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare update_review_task_signed",
+            &err,
+        )
+    })?;
+
+    let execute_result = client
+        .execute(&statement, &[&task_id])
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute update_review_task_signed",
+                &err,
+            )
+        })?;
+
+    match execute_result {
+        1 => Ok(()),
+        val => Err(ModelError::new(
+            ModelError::InternalError,
+            "update_review_task_signed: invalid result number",
+            &val,
+        )),
+    }
 }
 
 fn validate_review_task_info(_tasks_info: &[CreateReviewTaskInfo]) -> Result<(), ModelError> {
