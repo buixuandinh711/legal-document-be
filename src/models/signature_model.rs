@@ -8,6 +8,9 @@ pub struct DraftSignature {
     signer_name: String,
     position_name: String,
     signature: String,
+    signer_address: String,
+    division_id: String,
+    position_index: i16,
 }
 
 #[derive(Serialize)]
@@ -58,6 +61,9 @@ pub async fn get_draft_signatures(
             signer_name: row.get(0),
             position_name: row.get(1),
             signature: row.get(2),
+            signer_address: row.get(3),
+            division_id: row.get(4),
+            position_index: row.get(5),
         })
         .collect();
 

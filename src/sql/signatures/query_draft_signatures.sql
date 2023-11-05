@@ -1,6 +1,9 @@
 SELECT of."name" as signer_name,
     op."name" as position_name,
-    ds."signature"
+    ds."signature",
+    ds."signer_address",
+    ds."division_onchain_id",
+    ds."position_index"
 FROM "draft_signatures" ds
     INNER JOIN "onchain_officers" of ON of."address" = ds."signer_address"
     INNER JOIN "onchain_positions" op on op."officer_address" = ds."signer_address"
