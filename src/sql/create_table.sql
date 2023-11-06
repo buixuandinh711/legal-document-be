@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS "officers" CASCADE;
 DROP TABLE IF EXISTS "document_types" CASCADE;
 DROP TABLE IF EXISTS "documents" CASCADE;
 DROP TABLE IF EXISTS "review_tasks" CASCADE;
+DROP TABLE IF EXISTS "draft_tasks" CASCADE;
 DROP FUNCTION IF EXISTS update_drafts_updated_at CASCADE;
 DROP FUNCTION IF EXISTS add_signatures_created_at CASCADE;
 --------------------------------------------------------------------------------------------
@@ -61,6 +62,11 @@ INSERT
 	OR
 UPDATE ON "drafts" FOR EACH ROW EXECUTE FUNCTION update_drafts_updated_at();
 --------------------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION add_created_at() RETURNS TRIGGER AS $$ BEGIN NEW."created_at" = NOW();
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+--------------------------------------------------------------------------------------------
 CREATE TABLE "draft_signatures" (
 	"draft_id" BIGINT NOT NULL,
 	"signer_address" VARCHAR(255) NOT NULL,
@@ -78,13 +84,8 @@ CREATE TABLE "draft_signatures" (
 	CONSTRAINT "fk_sig_officer" FOREIGN KEY("signer_address") REFERENCES "officers"("onchain_address")
 );
 ------------------------------------------------
-CREATE OR REPLACE FUNCTION add_signatures_created_at() RETURNS TRIGGER AS $$ BEGIN NEW."created_at" = NOW();
-RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-------------------------------------------------
 CREATE TRIGGER "auto_add_signatures_created_at" BEFORE
-INSERT ON "draft_signatures" FOR EACH ROW EXECUTE FUNCTION add_signatures_created_at();
+INSERT ON "draft_signatures" FOR EACH ROW EXECUTE FUNCTION add_created_at();
 --------------------------------------------------------------------------------------------
 CREATE TABLE "review_tasks" (
 	"id" BIGSERIAL PRIMARY KEY,
@@ -99,13 +100,24 @@ CREATE TABLE "review_tasks" (
 	"status" SMALLINT NOT NULL
 );
 ------------------------------------------------
-CREATE OR REPLACE FUNCTION add_review_task_created_at() RETURNS TRIGGER AS $$ BEGIN NEW."created_at" = NOW();
-RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-------------------------------------------------
 CREATE TRIGGER "auto_add_review_task_created_at" BEFORE
-INSERT ON "review_tasks" FOR EACH ROW EXECUTE FUNCTION add_review_task_created_at();
+INSERT ON "review_tasks" FOR EACH ROW EXECUTE FUNCTION add_created_at();
+--------------------------------------------------------------------------------------------
+CREATE TABLE "draft_tasks" (
+	"id" BIGSERIAL PRIMARY KEY,
+	"name" VARCHAR NOT NULL,
+	"assigner_address" VARCHAR(42) NOT NULL,
+	"assigner_division_id" VARCHAR NOT NULL,
+	"assinger_position_index" SMALLINT NOT NULL,
+	"assignee_address" VARCHAR(42) NOT NULL,
+	"assignee_division_id" VARCHAR NOT NULL,
+	"assingee_position_index" SMALLINT NOT NULL,
+	"created_at" TIMESTAMP NOT NULL,
+	"draft_id" BIGINT
+);
+------------------------------------------------
+CREATE TRIGGER "auto_add_draft_task_created_at" BEFORE
+INSERT ON "draft_tasks" FOR EACH ROW EXECUTE FUNCTION add_created_at();
 --------------------------------------------------------------------------------------------
 -- CREATE TABLE "onchain_officers"(
 -- 	"id" BIGSERIAL PRIMARY KEY,

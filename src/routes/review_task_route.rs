@@ -2,7 +2,7 @@ mod routes {
     use crate::{
         app_config::AppState,
         middlewares::auth::AuthenticatedOfficer,
-        models::{officier_model::PositionRole, signature_model, task_model},
+        models::{officier_model::PositionRole, signature_model, review_task_model},
     };
     use actix_web::{get, post, web, HttpResponse, Responder};
     use serde::Deserialize;
@@ -47,7 +47,7 @@ mod routes {
         let tasks_info: Vec<_> = req_body
             .assignees
             .into_iter()
-            .map(|assignee| task_model::CreateReviewTaskInfo {
+            .map(|assignee| review_task_model::CreateReviewTaskInfo {
                 draft_id: req_body.draft_id,
                 assigner_address: address.clone(),
                 assigner_division_id: division_id.clone(),
@@ -58,7 +58,7 @@ mod routes {
             })
             .collect();
 
-        match task_model::create_review_task(&client, &tasks_info).await {
+        match review_task_model::create_review_task(&client, &tasks_info).await {
             Ok(_) => HttpResponse::Created().body("Review task created"),
             Err(_) => HttpResponse::InternalServerError().finish(),
         }
@@ -82,7 +82,7 @@ mod routes {
             return HttpResponse::Unauthorized().body("Invalid position");
         }
 
-        match task_model::get_created_review_tasks(&client, &address, &division_id, position_index)
+        match review_task_model::get_created_review_tasks(&client, &address, &division_id, position_index)
             .await
         {
             Ok(tasks) => HttpResponse::Ok().json(tasks),
@@ -108,7 +108,7 @@ mod routes {
             return HttpResponse::Unauthorized().body("Invalid position");
         }
 
-        match task_model::get_assigned_review_tasks(&client, &address, &division_id, position_index)
+        match review_task_model::get_assigned_review_tasks(&client, &address, &division_id, position_index)
             .await
         {
             Ok(tasks) => HttpResponse::Ok().json(tasks),
@@ -136,7 +136,7 @@ mod routes {
             return HttpResponse::Unauthorized().body("Invalid position");
         }
 
-        match task_model::get_assigned_review_task_detail(
+        match review_task_model::get_assigned_review_task_detail(
             &client,
             &address,
             &division_id,
@@ -150,7 +150,7 @@ mod routes {
         }
     }
 
-    #[post("/review-tasks/sign/{id}")]
+    #[post("/review_tasks/sign/{id}")]
     async fn sign_reviewed_draft(
         path: web::Path<i64>,
         app_state: web::Data<AppState>,
@@ -160,7 +160,7 @@ mod routes {
         let client = app_state.db_pool.get().await.unwrap();
         let task_id = path.into_inner();
 
-        let task_detail = task_model::get_review_task_detail(&client, &task_id).await;
+        let task_detail = review_task_model::get_review_task_detail(&client, &task_id).await;
         if task_detail.is_err() {
             return HttpResponse::InternalServerError().body("Failed to get task detail");
         }
@@ -199,7 +199,7 @@ mod routes {
             return HttpResponse::InternalServerError().finish();
         }
 
-        match task_model::update_review_task_signed(&client, &task_id).await {
+        match review_task_model::update_review_task_signed(&client, &task_id).await {
             Ok(_) => HttpResponse::Created().body("Review task draft signed"),
             Err(_) => HttpResponse::InternalServerError().finish(),
         }
@@ -209,7 +209,7 @@ mod routes {
 use actix_web::web;
 use routes::*;
 
-pub fn task_routes(cfg: &mut web::ServiceConfig) {
+pub fn review_task_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(create_review_task)
         .service(get_created_review_tasks)
         .service(get_assigned_review_tasks)

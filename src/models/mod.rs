@@ -4,7 +4,8 @@ pub mod draft_model;
 pub mod officier_model;
 pub mod published_doc_model;
 pub mod signature_model;
-pub mod task_model;
+pub mod review_task_model;
+pub mod draft_task_model;
 
 use derive_more::{Display, Error as DeriveError};
 use std::fmt::Display;

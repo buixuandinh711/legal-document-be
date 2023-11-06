@@ -72,7 +72,7 @@ pub async fn create_review_task(
         ));
     }
 
-    let mut statement = include_str!("../sql/tasks/create_review_task.sql").to_owned();
+    let mut statement = include_str!("../sql/review_tasks/create_review_task.sql").to_owned();
     let mut params = Vec::<&(dyn ToSql + Sync)>::new();
     let mut i = 1;
 
@@ -141,7 +141,7 @@ pub async fn get_created_review_tasks(
     assigner_div_id: &str,
     assigner_pos_index: i16,
 ) -> Result<Vec<CreatedReviewTaskItem>, ModelError> {
-    let statement = include_str!("../sql/tasks/query_created_review_tasks.sql");
+    let statement = include_str!("../sql/review_tasks/query_created_review_tasks.sql");
     let statement = client.prepare(&statement).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
@@ -185,7 +185,7 @@ pub async fn get_assigned_review_tasks(
     assignee_div_id: &str,
     assignee_pos_index: i16,
 ) -> Result<Vec<AssignedReviewTaskItem>, ModelError> {
-    let statement = include_str!("../sql/tasks/query_assigned_review_tasks.sql");
+    let statement = include_str!("../sql/review_tasks/query_assigned_review_tasks.sql");
     let statement = client.prepare(&statement).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
@@ -230,7 +230,7 @@ pub async fn get_assigned_review_task_detail(
     assignee_pos_index: i16,
     task_id: i64,
 ) -> Result<AssignedReviewTaskDetail, ModelError> {
-    let statement = include_str!("../sql/tasks/query_assigned_review_task_detail.sql");
+    let statement = include_str!("../sql/review_tasks/query_assigned_review_task_detail.sql");
     let statement = client.prepare(&statement).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
@@ -275,7 +275,7 @@ pub async fn get_review_task_detail(
     client: &Client,
     task_id: &i64,
 ) -> Result<ReviewTaskDetail, ModelError> {
-    let statement = include_str!("../sql/tasks/query_review_task_detail.sql");
+    let statement = include_str!("../sql/review_tasks/query_review_task_detail.sql");
     let statement = client.prepare(&statement).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
@@ -311,7 +311,7 @@ pub async fn get_review_task_detail(
 }
 
 pub async fn update_review_task_signed(client: &Client, task_id: &i64) -> Result<(), ModelError> {
-    let statement = include_str!("../sql/tasks/update_review_task_signed.sql");
+    let statement = include_str!("../sql/review_tasks/update_review_task_signed.sql");
     let statement = client.prepare(&statement).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
