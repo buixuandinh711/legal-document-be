@@ -1,4 +1,4 @@
-SELECT "draft_id",
+SELECT "name",
     "assigner_address",
     "assigner_division_id",
     "assigner_position_index",
@@ -6,6 +6,6 @@ SELECT "draft_id",
     "assignee_division_id",
     "assignee_position_index",
     "created_at",
-    "status"
-FROM "review_tasks"
+    "draft_id"
+FROM "draft_tasks"
 WHERE "id" = $1;

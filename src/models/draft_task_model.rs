@@ -48,6 +48,30 @@ pub struct AssignedDraftingTask {
     draft_id: Option<i64>,
 }
 
+#[derive(Serialize)]
+pub struct DraftingTaskDetail {
+    pub id: i64,
+    pub name: String,
+    pub assigner_address: String,
+    pub assigner_division_id: String,
+    pub assigner_position_index: i16,
+    pub assignee_address: String,
+    pub assignee_division_id: String,
+    pub assignee_position_index: i16,
+    pub created_at: SystemTime,
+    pub draft_id: Option<i64>,
+}
+
+#[derive(Serialize)]
+pub struct AssignedDraftingTaskDetail {
+    id: i64,
+    name: String,
+    assigner: String,
+    assigner_position: String,
+    assigned_at: SystemTime,
+    draft_id: Option<i64>,
+}
+
 pub async fn get_division_drafters(
     client: &Client,
     division_id: &str,
@@ -201,11 +225,11 @@ pub async fn get_assigned_draft_tasks(
     assigner_div_id: &str,
     assigner_pos_index: &i16,
 ) -> Result<Vec<AssignedDraftingTask>, ModelError> {
-    let statement = include_str!("../sql/draft_tasks/query_created_draft_tasks.sql");
+    let statement = include_str!("../sql/draft_tasks/query_assigned_drafting_tasks.sql");
     let statement = client.prepare(&statement).await.map_err(|err| {
         ModelError::new(
             ModelError::InternalError,
-            "DbPool: prepare query_created_draft_tasks",
+            "DbPool: prepare query_assigned_drafting_tasks",
             &err,
         )
     })?;
@@ -219,7 +243,7 @@ pub async fn get_assigned_draft_tasks(
         .map_err(|err| {
             ModelError::new(
                 ModelError::InternalError,
-                "DbPool: execute query_created_draft_tasks",
+                "DbPool: execute query_assigned_drafting_tasks",
                 &err,
             )
         })?;
@@ -237,6 +261,117 @@ pub async fn get_assigned_draft_tasks(
         .collect();
 
     Ok(tasks)
+}
+
+pub async fn get_draft_task_detail(
+    client: &Client,
+    task_id: &i64,
+) -> Result<DraftingTaskDetail, ModelError> {
+    let statement = include_str!("../sql/draft_tasks/query_drafting_task_detail.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_drafting_task_detail",
+            &err,
+        )
+    })?;
+
+    let query_result = client
+        .query_one(&statement, &[&task_id])
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute query_drafting_task_detail",
+                &err,
+            )
+        })?;
+
+    let task = DraftingTaskDetail {
+        id: task_id.clone(),
+        name: query_result.get(0),
+        assigner_address: query_result.get(1),
+        assigner_division_id: query_result.get(2),
+        assigner_position_index: query_result.get(3),
+        assignee_address: query_result.get(4),
+        assignee_division_id: query_result.get(5),
+        assignee_position_index: query_result.get(6),
+        created_at: query_result.get(7),
+        draft_id: query_result.get(8),
+    };
+
+    Ok(task)
+}
+
+pub async fn get_assigned_draft_task_detail(
+    client: &Client,
+    task_id: &i64,
+) -> Result<AssignedDraftingTaskDetail, ModelError> {
+    let statement = include_str!("../sql/draft_tasks/query_assigned_drafting_task_detail.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_assigned_drafting_task_detail",
+            &err,
+        )
+    })?;
+
+    let query_result = client
+        .query_one(&statement, &[&task_id])
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute query_assigned_drafting_task_detail",
+                &err,
+            )
+        })?;
+
+    let task = AssignedDraftingTaskDetail {
+        id: task_id.clone(),
+        name: query_result.get(0),
+        assigner: query_result.get(1),
+        assigner_position: query_result.get(2),
+        assigned_at: query_result.get(3),
+        draft_id: query_result.get(4),
+    };
+
+    Ok(task)
+}
+
+pub async fn update_draft_task_submitted(
+    client: &Client,
+    task_id: &i64,
+    draft_id: &i64,
+) -> Result<(), ModelError> {
+    let statement = include_str!("../sql/draft_tasks/update_draft_task_submitted.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare update_draft_task_submitted",
+            &err,
+        )
+    })?;
+
+    let execute_result = client
+        .execute(&statement, &[&draft_id, &task_id])
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute update_draft_task_submitted",
+                &err,
+            )
+        })?;
+
+    match execute_result {
+        1 => Ok(()),
+        val => Err(ModelError::new(
+            ModelError::InternalError,
+            "update_draft_task_submitted: invalid result number",
+            &val,
+        )),
+    }
 }
 
 fn validate_task_info(_tasks_info: &CreateDraftTaskInfo) -> Result<(), ModelError> {

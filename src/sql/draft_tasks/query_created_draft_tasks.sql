@@ -8,7 +8,7 @@ FROM "draft_tasks" dt
     INNER JOIN "onchain_officers" of ON of."address" = dt."assignee_address"
     INNER JOIN "onchain_positions" op ON op."officer_address" = dt."assignee_address"
     AND op."division_onchain_id" = dt."assignee_division_id"
-    AND op."position_index" = dt."assingee_position_index"
+    AND op."position_index" = dt."assignee_position_index"
 WHERE dt."assigner_address" = $1
     AND dt."assigner_division_id" = $2
-    AND dt."assinger_position_index" = $3;
+    AND dt."assigner_position_index" = $3;

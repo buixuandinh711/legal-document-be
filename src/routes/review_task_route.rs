@@ -2,7 +2,7 @@ mod routes {
     use crate::{
         app_config::AppState,
         middlewares::auth::AuthenticatedOfficer,
-        models::{officier_model::PositionRole, signature_model, review_task_model},
+        models::{officier_model::PositionRole, review_task_model, signature_model},
     };
     use actix_web::{get, post, web, HttpResponse, Responder};
     use serde::Deserialize;
@@ -82,8 +82,13 @@ mod routes {
             return HttpResponse::Unauthorized().body("Invalid position");
         }
 
-        match review_task_model::get_created_review_tasks(&client, &address, &division_id, position_index)
-            .await
+        match review_task_model::get_created_review_tasks(
+            &client,
+            &address,
+            &division_id,
+            position_index,
+        )
+        .await
         {
             Ok(tasks) => HttpResponse::Ok().json(tasks),
             Err(_) => HttpResponse::InternalServerError().finish(),
@@ -108,8 +113,13 @@ mod routes {
             return HttpResponse::Unauthorized().body("Invalid position");
         }
 
-        match review_task_model::get_assigned_review_tasks(&client, &address, &division_id, position_index)
-            .await
+        match review_task_model::get_assigned_review_tasks(
+            &client,
+            &address,
+            &division_id,
+            position_index,
+        )
+        .await
         {
             Ok(tasks) => HttpResponse::Ok().json(tasks),
             Err(_) => HttpResponse::InternalServerError().finish(),
@@ -150,13 +160,14 @@ mod routes {
         }
     }
 
-    #[post("/review_tasks/sign/{id}")]
+    #[post("/review-tasks/sign/{id}")]
     async fn sign_reviewed_draft(
         path: web::Path<i64>,
         app_state: web::Data<AppState>,
         authenticated_officer: AuthenticatedOfficer,
         req_body: web::Json<SignReviewDraftBody>,
     ) -> impl Responder {
+        log::info!("Called fasdfsdfs");
         let client = app_state.db_pool.get().await.unwrap();
         let task_id = path.into_inner();
 
@@ -175,7 +186,7 @@ mod routes {
 
         if !(task_detail.assignee_address == address
             && task_detail.assignee_division_id == division_id
-            && task_detail.assingee_position_index == position_index)
+            && task_detail.assignee_position_index == position_index)
         {
             return HttpResponse::Unauthorized().body("Not the task assignee");
         }
@@ -210,9 +221,9 @@ use actix_web::web;
 use routes::*;
 
 pub fn review_task_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(create_review_task)
-        .service(get_created_review_tasks)
+    cfg.service(get_created_review_tasks)
         .service(get_assigned_review_tasks)
         .service(get_assigned_review_task_detail)
-        .service(sign_reviewed_draft);
+        .service(sign_reviewed_draft)
+        .service(create_review_task);
 }

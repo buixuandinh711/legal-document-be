@@ -18,6 +18,6 @@ WHERE od."document_content_hash" IS NULL
             WHERE dt."id" IS NOT NULL
                 AND dt."assigner_address" = '0x2382488053fa5b5559d69276822fb8767e7bd546'
                 AND dt."assigner_division_id" = 'H1'
-                AND dt."assinger_position_index" = 0
+                AND dt."assigner_position_index" = 0
         )
     );

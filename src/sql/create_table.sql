@@ -92,10 +92,10 @@ CREATE TABLE "review_tasks" (
 	"draft_id" BIGINT NOT NULL,
 	"assigner_address" VARCHAR(255) NOT NULL,
 	"assigner_division_id" VARCHAR(255) NOT NULL,
-	"assinger_position_index" SMALLINT NOT NULL,
+	"assigner_position_index" SMALLINT NOT NULL,
 	"assignee_address" VARCHAR(255) NOT NULL,
 	"assignee_division_id" VARCHAR(255) NOT NULL,
-	"assingee_position_index" SMALLINT NOT NULL,
+	"assignee_position_index" SMALLINT NOT NULL,
 	"created_at" TIMESTAMP NOT NULL,
 	"status" SMALLINT NOT NULL
 );
@@ -108,10 +108,10 @@ CREATE TABLE "draft_tasks" (
 	"name" VARCHAR NOT NULL,
 	"assigner_address" VARCHAR(42) NOT NULL,
 	"assigner_division_id" VARCHAR NOT NULL,
-	"assinger_position_index" SMALLINT NOT NULL,
+	"assigner_position_index" SMALLINT NOT NULL,
 	"assignee_address" VARCHAR(42) NOT NULL,
 	"assignee_division_id" VARCHAR NOT NULL,
-	"assingee_position_index" SMALLINT NOT NULL,
+	"assignee_position_index" SMALLINT NOT NULL,
 	"created_at" TIMESTAMP NOT NULL,
 	"draft_id" BIGINT
 );
