@@ -77,7 +77,69 @@ mod routes {
             };
 
         match draft_task_model::create_draft_task(&client, &task_info).await {
-            Ok(_) => HttpResponse::Created().body("Draft task created"),
+            Ok(task_id) => HttpResponse::Created().json(task_id),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    }
+
+    #[get("/draft-tasks/created")]
+    async fn get_created_draft_tasks(
+        app_state: web::Data<AppState>,
+        authenticated_officer: AuthenticatedOfficer,
+    ) -> impl Responder {
+        let client = app_state.db_pool.get().await.unwrap();
+
+        let AuthenticatedOfficer {
+            address,
+            division_id,
+            position_index,
+            position_role,
+        } = authenticated_officer;
+
+        if position_role != PositionRole::Manager {
+            return HttpResponse::Unauthorized().body("Invalid position role");
+        }
+
+        match draft_task_model::get_created_draft_tasks(
+            &client,
+            &address,
+            &division_id,
+            &position_index,
+        )
+        .await
+        {
+            Ok(tasks) => HttpResponse::Ok().json(tasks),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    }
+
+    #[get("/draft-tasks/assigned")]
+    async fn get_assigned_draft_tasks(
+        app_state: web::Data<AppState>,
+        authenticated_officer: AuthenticatedOfficer,
+    ) -> impl Responder {
+        let client = app_state.db_pool.get().await.unwrap();
+
+        let AuthenticatedOfficer {
+            address,
+            division_id,
+            position_index,
+            position_role,
+        } = authenticated_officer;
+
+        if position_role != PositionRole::Manager {
+            return HttpResponse::Unauthorized().body("Invalid position role");
+        }
+
+        match draft_task_model::get_assigned_draft_tasks(
+            &client,
+            &address,
+            &division_id,
+            &position_index,
+        )
+        .await
+        {
+            Ok(tasks) => HttpResponse::Ok().json(tasks),
             Err(_) => HttpResponse::InternalServerError().finish(),
         }
     }
@@ -88,5 +150,7 @@ use routes::*;
 
 pub fn draft_task_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(get_division_drafters)
-        .service(create_draft_task);
+        .service(create_draft_task)
+        .service(get_created_draft_tasks)
+        .service(get_assigned_draft_tasks);
 }

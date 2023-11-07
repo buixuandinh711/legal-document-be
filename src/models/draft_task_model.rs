@@ -1,3 +1,5 @@
+use std::time::SystemTime;
+
 use deadpool_postgres::Client;
 use serde::Serialize;
 
@@ -24,6 +26,26 @@ pub struct CreateDraftTaskInfo {
     pub assignee_address: String,
     pub assignee_division_id: String,
     pub assignee_position_index: i16,
+}
+
+#[derive(Serialize)]
+pub struct CreatedDraftingTask {
+    id: i64,
+    name: String,
+    assignee: String,
+    assignee_position: String,
+    created_at: SystemTime,
+    draft_id: Option<i64>,
+}
+
+#[derive(Serialize)]
+pub struct AssignedDraftingTask {
+    id: i64,
+    name: String,
+    assigner: String,
+    assigner_position: String,
+    assigned_at: SystemTime,
+    draft_id: Option<i64>,
 }
 
 pub async fn get_division_drafters(
@@ -84,7 +106,7 @@ pub async fn get_division_drafters(
 pub async fn create_draft_task(
     client: &Client,
     tasks_info: &CreateDraftTaskInfo,
-) -> Result<(), ModelError> {
+) -> Result<i64, ModelError> {
     if validate_task_info(&tasks_info).is_err() {
         return Err(ModelError::new(
             ModelError::ValidationError,
@@ -102,8 +124,8 @@ pub async fn create_draft_task(
         )
     })?;
 
-    let _result = client
-        .execute(
+    let result = client
+        .query_one(
             &statement,
             &[
                 &tasks_info.name,
@@ -124,7 +146,97 @@ pub async fn create_draft_task(
             )
         })?;
 
-    Ok(())
+    let created_task_id = result.get(0);
+
+    Ok(created_task_id)
+}
+
+pub async fn get_created_draft_tasks(
+    client: &Client,
+    assigner_address: &str,
+    assigner_div_id: &str,
+    assigner_pos_index: &i16,
+) -> Result<Vec<CreatedDraftingTask>, ModelError> {
+    let statement = include_str!("../sql/draft_tasks/query_created_draft_tasks.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_created_draft_tasks",
+            &err,
+        )
+    })?;
+
+    let query_result = client
+        .query(
+            &statement,
+            &[&assigner_address, &assigner_div_id, &assigner_pos_index],
+        )
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute query_created_draft_tasks",
+                &err,
+            )
+        })?;
+
+    let tasks: Vec<CreatedDraftingTask> = query_result
+        .iter()
+        .map(|row| CreatedDraftingTask {
+            id: row.get(0),
+            name: row.get(1),
+            assignee: row.get(2),
+            assignee_position: row.get(3),
+            created_at: row.get(4),
+            draft_id: row.get(5),
+        })
+        .collect();
+
+    Ok(tasks)
+}
+
+pub async fn get_assigned_draft_tasks(
+    client: &Client,
+    assigner_address: &str,
+    assigner_div_id: &str,
+    assigner_pos_index: &i16,
+) -> Result<Vec<AssignedDraftingTask>, ModelError> {
+    let statement = include_str!("../sql/draft_tasks/query_created_draft_tasks.sql");
+    let statement = client.prepare(&statement).await.map_err(|err| {
+        ModelError::new(
+            ModelError::InternalError,
+            "DbPool: prepare query_created_draft_tasks",
+            &err,
+        )
+    })?;
+
+    let query_result = client
+        .query(
+            &statement,
+            &[&assigner_address, &assigner_div_id, &assigner_pos_index],
+        )
+        .await
+        .map_err(|err| {
+            ModelError::new(
+                ModelError::InternalError,
+                "DbPool: execute query_created_draft_tasks",
+                &err,
+            )
+        })?;
+
+    let tasks: Vec<AssignedDraftingTask> = query_result
+        .iter()
+        .map(|row| AssignedDraftingTask {
+            id: row.get(0),
+            name: row.get(1),
+            assigner: row.get(2),
+            assigner_position: row.get(3),
+            assigned_at: row.get(4),
+            draft_id: row.get(5),
+        })
+        .collect();
+
+    Ok(tasks)
 }
 
 fn validate_task_info(_tasks_info: &CreateDraftTaskInfo) -> Result<(), ModelError> {
