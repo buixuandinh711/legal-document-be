@@ -13,7 +13,7 @@ WHERE od."document_content_hash" IS NULL
             AND d."position_index" = $3
         )
         OR d."id" IN (
-            SELECT DISTINCT dt."id"
+            SELECT DISTINCT dt."draft_id"
             FROM "draft_tasks" dt
             WHERE dt."id" IS NOT NULL
                 AND dt."assigner_address" = $1
