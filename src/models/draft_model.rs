@@ -19,10 +19,10 @@ pub struct CreateDraftInfo {
 pub struct DraftsListItem {
     pub id: i64,
     pub name: String,
-    pub drafter_username: String,
-    pub drafter_name: String,
-    pub document_name: String,
     pub updated_at: SystemTime,
+    pub drafter_name: String,
+    pub drafter_pos: String,
+    pub status: i32,
 }
 
 #[derive(Serialize)]
@@ -35,8 +35,8 @@ pub struct DraftDetail {
     pub file_name: String,
     pub updated_at: SystemTime,
     pub doc_uri: String,
-    pub drafter_username: String,
     pub drafter_name: String,
+    pub drafter_pos: String,
 }
 
 #[derive(Serialize)]
@@ -128,11 +128,11 @@ pub async fn get_draft_list(
         .iter()
         .map(|row| DraftsListItem {
             id: row.get(0),
-            drafter_username: row.get(1),
-            drafter_name: row.get(2),
-            name: row.get(3),
-            document_name: row.get(4),
-            updated_at: row.get(5),
+            name: row.get(1),
+            updated_at: row.get(2),
+            drafter_name: row.get(3),
+            drafter_pos: row.get(4),
+            status: row.get(5),
         })
         .collect();
 
@@ -179,8 +179,8 @@ pub async fn get_draft_detail(client: &Client, draft_id: i64) -> Result<DraftDet
         file_name: query_result.get(5),
         updated_at: query_result.get(6),
         doc_uri: query_result.get(7),
-        drafter_username: query_result.get(8),
-        drafter_name: query_result.get(9),
+        drafter_name: query_result.get(8),
+        drafter_pos: query_result.get(9),
     };
 
     Ok(drafts_detail)

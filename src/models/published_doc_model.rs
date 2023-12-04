@@ -1,3 +1,5 @@
+use std::time::SystemTime;
+
 use deadpool_postgres::Client;
 use serde::Serialize;
 
@@ -9,7 +11,7 @@ pub struct PublishedDoc {
     pub number: String,
     pub name: String,
     pub publisher: String,
-    pub published_date: i32,
+    pub published_date: SystemTime,
 }
 #[derive(Serialize)]
 pub struct PublishedDocDetail {
@@ -18,7 +20,7 @@ pub struct PublishedDocDetail {
     pub name: String,
     pub doc_type: String,
     pub publisher: String,
-    pub published_date: i32,
+    pub published_date: SystemTime,
     pub resource_uri: Option<String>,
 }
 
@@ -52,7 +54,7 @@ pub async fn get_published_docs(
             content_hash: row.get(0),
             number: row.get(1),
             name: row.get(2),
-            publisher: "".to_owned() + row.get(3) + row.get(4),
+            publisher: row.get::<usize, String>(3) + " - " + row.get(4),
             published_date: row.get(5),
         })
         .collect();

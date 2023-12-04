@@ -1,5 +1,7 @@
 DROP TRIGGER IF EXISTS "auto_update_drafts_updated_at" ON "drafts" CASCADE;
 DROP TRIGGER IF EXISTS "auto_add_signatures_created_at" ON "draft_signatures" CASCADE;
+DROP TRIGGER IF EXISTS "auto_add_review_task_created_at" ON "draft_signatures" CASCADE;
+DROP TRIGGER IF EXISTS "auto_add_draft_task_created_at" ON "draft_signatures" CASCADE;
 DROP TABLE IF EXISTS "draft_signatures" CASCADE;
 DROP TABLE IF EXISTS "drafts" CASCADE;
 DROP TABLE IF EXISTS "officers" CASCADE;
